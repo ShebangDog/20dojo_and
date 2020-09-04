@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import jp.co.cyberagent.dojo2020.DI
-import jp.co.cyberagent.dojo2020.data.model.Profile
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
