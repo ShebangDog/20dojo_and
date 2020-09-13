@@ -42,8 +42,8 @@ class DefaultFireStoreMemoDataSource(
             memoEntityList ?: return@addSnapshotListener
 
             val memoList = memoEntityList.mapNotNull { it.modelOrNull() }
-            offer(memoList)
 
+            offer(memoList)
         }.also { awaitClose { it.remove() } }
     }
 
@@ -62,8 +62,8 @@ class DefaultFireStoreMemoDataSource(
                 memoEntityList ?: return@addSnapshotListener
 
                 val memoList = memoEntityList.mapNotNull { it.modelOrNull() }
-                offer(memoList)
 
+                offer(memoList)
             }.also { awaitClose { it.remove() } }
     }
 
@@ -76,7 +76,7 @@ class DefaultFireStoreMemoDataSource(
             memoEntity ?: return@addSnapshotListener
 
             offer(memoEntity.modelOrNull())
-        }
+        }.also { awaitClose { it.remove() } }
 
     }
 
