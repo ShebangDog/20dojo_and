@@ -1,5 +1,7 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewbinding.ViewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Memo
@@ -39,8 +45,14 @@ class HomeFragment : Fragment() {
         with(binding) {
             addFloatingActionButton.setOnClickListener { showMemoCreate() }
             profileToolBarLayout.apply {
-                homeMaterialToolBar.setNavigationOnClickListener {
-                    showProfile()
+                homeMaterialToolBar.apply {
+                    setNavigationOnClickListener { showProfile() }
+
+                    homeViewModel.userLiveData.observe(viewLifecycleOwner) { userInfo ->
+                        userInfo ?: return@observe
+
+                        getDrawable(binding, userInfo.imageUri) { navigationIcon = it }
+                    }
                 }
 
                 filterListImageButton.setOnClickListener {
@@ -84,6 +96,27 @@ class HomeFragment : Fragment() {
 
     private fun showMemoCreate() {
         findNavController().navigate(R.id.action_homeFragment_to_memoCreateFragment)
+    }
+
+    private fun getDrawable(
+        viewBinding: ViewBinding,
+        imageUri: Uri?,
+        consumer: (Drawable) -> Unit
+    ) {
+        Glide.with(viewBinding.root).asDrawable()
+            .load(imageUri)
+            .circleCrop()
+            .into(object : CustomTarget<Drawable>() {
+                override fun onResourceReady(
+                    resource: Drawable,
+                    transition: Transition<in Drawable>?
+                ) {
+
+                    consumer(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {}
+            })
     }
 
 }
