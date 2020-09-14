@@ -57,91 +57,17 @@
 
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/shape_border"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/view_cardview_padding_topbottom"
-                android:paddingBottom="@dimen/view_cardview_padding_topbottom">
+                android:layout_height="0dp" />
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/view_cardview_margin_leftright"
-                    android:layout_marginEnd="@dimen/view_cardview_margin_leftright"
-                    android:src="@mipmap/twitter_logo" />
+            <include
+                android:id="@+id/twitter_account_item"
+                layout="@layout/item_account" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/twitter_id_text_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start"
-                        android:text="id"
-                        android:textColor="@color/primaryTextColor"
-                        android:textSize="@dimen/view_cardview_textsize_sub" />
-
-                    <TextView
-                        android:id="@+id/twitter_url_text_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start"
-                        android:text="url"
-                        android:textSize="@dimen/view_cardview_textsize_sub" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/shape_border"
-                android:orientation="horizontal"
-                android:paddingTop="@dimen/view_cardview_padding_topbottom"
-                android:paddingBottom="@dimen/view_cardview_padding_topbottom">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/view_cardview_margin_leftright"
-                    android:layout_marginEnd="@dimen/view_cardview_margin_leftright"
-                    android:src="@mipmap/github_logo" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/github_id_text_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start"
-                        android:text="id"
-                        android:textColor="@color/primaryTextColor"
-                        android:textSize="@dimen/view_cardview_textsize_sub" />
-
-                    <TextView
-                        android:id="@+id/github_url_text_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start"
-                        android:text="url"
-                        android:textSize="@dimen/view_cardview_textsize_sub" />
-
-                </LinearLayout>
-
-            </LinearLayout>
+            <include
+                android:id="@+id/github_account_item"
+                layout="@layout/item_account" />
 
             <LinearLayout
                 android:layout_width="match_parent"

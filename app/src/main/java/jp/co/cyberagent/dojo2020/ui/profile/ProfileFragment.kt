@@ -48,16 +48,6 @@ class ProfileFragment : Fragment() {
                 Glide.with(view).load(firebaseUser.imageUri).circleCrop().into(iconImageView)
             }
 
-
-            viewModel.profileLiveData.observe(viewLifecycleOwner) { profile ->
-                val twitterAccount = profile.accountList?.first { it.serviceName == "twitter" }
-                twitterIdTextView.text = twitterAccount?.id
-                twitterUrlTextView.text = twitterAccount?.url
-
-                val githubAccount = profile.accountList?.first { it.serviceName == "github" }
-                githubIdTextView.text = githubAccount?.id
-                githubUrlTextView.text = githubAccount?.url
-            }
         }
     }
 
