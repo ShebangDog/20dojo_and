@@ -3,14 +3,11 @@ package jp.co.cyberagent.dojo2020.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
-import com.bumptech.glide.Glide
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.*
 import jp.co.cyberagent.dojo2020.databinding.ItemMemoBinding
+import jp.co.cyberagent.dojo2020.ui.ext.showImage
 import java.util.Collections.emptyList
 
 class TextAdapter(private val onItemClickListener: View.OnClickListener) :
@@ -81,11 +78,6 @@ class TextAdapter(private val onItemClickListener: View.OnClickListener) :
             private const val addedPostFix = '.'
         }
 
-        private fun ImageButton.showImage(viewBinding: ViewBinding, @DrawableRes drawableId: Int) {
-            val drawable = binding.root.context.getDrawable(drawableId)
-
-            Glide.with(viewBinding.root).load(drawable).into(this)
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
