@@ -4,7 +4,7 @@ object FireStoreConstants {
     const val USERS = "users"
     const val MEMOS = "memos"
     const val PROFILE = "profile"
-    const val YOUR = "YOUR"
+    const val YOUR = "your"
 
     const val CATEGORY = "category"
 }
