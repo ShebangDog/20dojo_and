@@ -1,6 +1,8 @@
 package jp.co.cyberagent.dojo2020.ui
 
+import android.content.ContentValues.TAG
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -12,14 +14,14 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import jp.co.cyberagent.dojo2020.data.model.Account
 import jp.co.cyberagent.dojo2020.data.model.UserItem
 import jp.co.cyberagent.dojo2020.data.model.ViewType
-import jp.co.cyberagent.dojo2020.databinding.ItemAnalyticBinding
+import jp.co.cyberagent.dojo2020.databinding.ItemAnalyticGraphBinding
 import jp.co.cyberagent.dojo2020.databinding.ItemPrimaryAccountBinding
 import jp.co.cyberagent.dojo2020.databinding.ItemSecondaryAccountBinding
 import jp.co.cyberagent.dojo2020.ui.ext.showImage
 
 typealias PrimaryAccountApplier = ItemPrimaryAccountBinding.(UserItem) -> Unit
 typealias SecondaryAccountApplier = ItemSecondaryAccountBinding.(UserItem) -> Unit
-typealias AnalyticApplier = ItemAnalyticBinding.(UserItem) -> Unit
+typealias AnalyticApplier = ItemAnalyticGraphBinding.(UserItem) -> Unit
 
 class UserAdapter : RecyclerView.Adapter<UserAdapter.UserItemViewHolder>() {
 
@@ -49,7 +51,7 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.UserItemViewHolder>() {
                     viewBinding as ItemSecondaryAccountBinding,
                     userItem
                 )
-                ViewType.Analytic -> analyticApplier(viewBinding as ItemAnalyticBinding, userItem)
+                ViewType.Analytic -> analyticApplier(viewBinding as ItemAnalyticGraphBinding, userItem)
             }
         }
     }
@@ -80,7 +82,7 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.UserItemViewHolder>() {
                 parent,
                 false
             )
-            ViewType.Analytic -> ItemAnalyticBinding.inflate(inflater, parent, false)
+            ViewType.Analytic -> ItemAnalyticGraphBinding.inflate(inflater, parent, false)
         }
 
         return UserItemViewHolder(viewBinding)
@@ -93,6 +95,7 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.UserItemViewHolder>() {
             when (item) {
                 is UserItem.PrimaryAccountItem -> {
                     item.value?.also {
+                        Log.d(TAG, "USERITEM.PRIMARYACCOUNT")
                         nameTextView.text = it.name
                         iconImageButton.showImage(this, it.imageUri)
                     }
