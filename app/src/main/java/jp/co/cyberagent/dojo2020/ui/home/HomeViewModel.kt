@@ -23,6 +23,7 @@ class HomeViewModel(context: Context) : ViewModel() {
     private val firebaseUserInfoRepository: UserInfoRepository = DefaultUserInfoRepository()
 
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
+    val userLiveData = userFlow.asLiveData()
 
     @ExperimentalCoroutinesApi
     val textListLiveData = userFlow.flatMapLatest { userInfo ->

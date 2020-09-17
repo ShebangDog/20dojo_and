@@ -4,6 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import jp.co.cyberagent.dojo2020.data.model.Profile
 import jp.co.cyberagent.dojo2020.data.remote.firestore.profileRef
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
@@ -30,7 +31,7 @@ class DefaultFireStoreProfileDataSource(
             profileEntity ?: return@addSnapshotListener
 
             offer(profileEntity.toModel())
-        }
+        }.also { awaitClose { it.remove() } }
     }
 
 }

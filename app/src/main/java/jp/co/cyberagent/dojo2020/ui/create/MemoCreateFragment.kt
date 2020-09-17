@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import jp.co.cyberagent.dojo2020.R
@@ -68,11 +69,11 @@ class MemoCreateFragment : Fragment() {
                 setSelection(1)
             }
 
-            memoCreateViewModel.categoryListLiveData.observe(viewLifecycleOwner) { categoryList ->
+            memoCreateViewModel.categoryListLiveData.observe(viewLifecycleOwner) { categorySet ->
                 spinnerAdapter.apply {
                     clear()
                     addAll(SpinnerAdapter.defaultItemList(context))
-                    addAll(categoryList.map { it.name })
+                    addAll(categorySet.map { it.name })
                     notifyDataSetChanged()
                 }
             }

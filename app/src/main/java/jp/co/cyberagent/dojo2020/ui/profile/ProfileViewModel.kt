@@ -1,48 +1,56 @@
 package jp.co.cyberagent.dojo2020.ui.profile
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import jp.co.cyberagent.dojo2020.DI
-import jp.co.cyberagent.dojo2020.data.model.Memo
-import jp.co.cyberagent.dojo2020.data.model.Profile
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.TimeEachCategory
+import jp.co.cyberagent.dojo2020.ui.create.spinner.SpinnerAdapter
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapConcat
 
 class ProfileViewModel(context: Context) : ViewModel() {
 
     private val firebaseUserInfoRepository = DI.injectDefaultUserInfoRepository()
-    private val firebaseProfileRepository = DI.injectDefaultProfileRepository(context)
+    private val profileRepository = DI.injectDefaultProfileRepository(context)
     private val memoRepository = DI.injectDefaultMemoRepository(context)
+    private val categoryRepository = DI.injectDefaultCategoryRepository(context)
 
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
-    val firebaseUserInfo = userFlow.asLiveData()
 
-    private val profileMutableLiveData: MutableLiveData<Profile> = MutableLiveData()
-    val profileLiveData: LiveData<Profile> = profileMutableLiveData
+    @FlowPreview
+    private val profileFlow = userFlow.flatMapConcat { profileRepository.fetchProfile(it?.uid) }
 
-    fun fetchUserData() = viewModelScope.launch {
-        userFlow.collect { userInfo ->
-            firebaseProfileRepository.fetchProfile(userInfo?.uid).collect {
-                profileMutableLiveData.value = it
-            }
-        }
-    }
+    @FlowPreview
+    private val timeEachCategoryFlow = userFlow.flatMapConcat { firebaseUserInfo ->
+        val uid = firebaseUserInfo?.uid
 
-    private val studyTimeMutableLiveData: MutableLiveData<Long> = MutableLiveData()
-    val studyTimeLiveData: LiveData<Long> = studyTimeMutableLiveData
+        memoRepository.fetchAllMemo(uid)
+            .combine(categoryRepository.fetchAllCategory(uid)) { memoList, ownCategoryList ->
+                val defaultCategoryList = SpinnerAdapter.defaultItemList(context)
+                    .map { Category(it) }
 
-    fun calculateStudyTime() = viewModelScope.launch {
-        userFlow.collect { userInfo ->
-            memoRepository.fetchAllMemo(userInfo?.uid).collect { memoList ->
-                val totalTime = memoList.fold(0L) { result: Long, memo: Memo ->
+                val categoryList = ownCategoryList + defaultCategoryList
 
-                    result + memo.time
+                categoryList.mapNotNull { category ->
+                    val totalTimeForEachCategory = memoList
+                        .filter { it.category == category }
+                        .fold(0L) { result, memo -> result + memo.time }
+                        .takeUnless { it == 0L }
+
+                    totalTimeForEachCategory?.let { TimeEachCategory(it, category) }
                 }
-
-                Log.d(TAG, totalTime.toString())
             }
-        }
     }
+
+    val firebaseUserInfoLiveData = userFlow.asLiveData()
+
+    @FlowPreview
+    val timeEachCategoryLiveData = timeEachCategoryFlow.asLiveData()
+
+    @FlowPreview
+    val profileLiveData = profileFlow.asLiveData()
+
 }

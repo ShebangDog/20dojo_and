@@ -8,17 +8,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import com.bumptech.glide.Glide
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
+import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.databinding.FragmentProfileBinding
+import jp.co.cyberagent.dojo2020.ui.ext.showImage
+import kotlinx.coroutines.FlowPreview
 
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
 
-    private val viewModel: ProfileViewModel by viewModels {
+    private val profileViewModel: ProfileViewModel by viewModels {
         ProfileViewModelFactory(this, Bundle(), requireContext())
     }
 
@@ -32,6 +34,7 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
+    @FlowPreview
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -40,57 +43,64 @@ class ProfileFragment : Fragment() {
                 view.findNavController().navigateUp()
             }
 
-            viewModel.firebaseUserInfo.observe(viewLifecycleOwner) { firebaseUser ->
-                firebaseUser ?: return@observe
-
-                userNameTextView.text = firebaseUser.name
-
-                Glide.with(view).load(firebaseUser.imageUri).circleCrop().into(iconImageView)
+            profileToolBarLayout.profileMaterialToolBar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.share_item -> true
+                    else -> super.onOptionsItemSelected(it)
+                }
             }
 
-
-            viewModel.profileLiveData.observe(viewLifecycleOwner) { profile ->
-                val twitterAccount = profile.accountList?.first { it.serviceName == "twitter" }
-                twitterIdTextView.text = twitterAccount?.id
-                twitterUrlTextView.text = twitterAccount?.url
-
-                val githubAccount = profile.accountList?.first { it.serviceName == "github" }
-                githubIdTextView.text = githubAccount?.id
-                githubUrlTextView.text = githubAccount?.url
+            profileViewModel.firebaseUserInfoLiveData.observe(viewLifecycleOwner) { firebaseUserInfo ->
+                with(primaryAccountLayout) {
+                    iconImageButton.showImage(
+                        this,
+                        firebaseUserInfo?.imageUri
+                    )
+                }
             }
-        }
-    }
 
-    private fun setupPieChart() {
+            profileViewModel.profileLiveData.observe(viewLifecycleOwner) { profile ->
+                profile?.accountList?.forEach {
+                    if (it.serviceName == "Twitter") {
+                        secondaryTopAccountLayout.apply {
+                            iconImageButton.showImage(this, R.mipmap.twitter_logo)
+                            idTextView.text = it.id
+                        }
+                    }
 
-        val times = listOf(15, 45, 25, 35)
-        val tags = listOf("japanese", "math", "sciense", "english")
+                    if (it.serviceName == "GitHub") {
+                        secondaryBottomAccountLayout.apply {
+                            iconImageButton.showImage(this, R.mipmap.github_logo)
+                            idTextView.text = it.id
+                        }
+                    }
+                }
 
-        val pieEntries: MutableList<PieEntry> = ArrayList()
+            }
 
-        (times zip tags).forEach {
-            pieEntries.add(PieEntry(it.first.toFloat(), it.second))
-        }
+            profileViewModel.timeEachCategoryLiveData.observe(viewLifecycleOwner) { timeEachCategoryList ->
+                val pieEntryList = timeEachCategoryList
+                    .map { PieEntry(it.time.toFloat(), it.category.name) }
 
-        val dataSet = PieDataSet(pieEntries, "category")
-        dataSet.apply {
-            setColors(*ColorTemplate.JOYFUL_COLORS)
-            valueTextSize = 12f
-            valueTextColor = Color.WHITE
-            //setDrawValues(false) // 数値を削除するか
-        }
+                val dataSet = PieDataSet(pieEntryList, "category").apply {
+                    setColors(*ColorTemplate.JOYFUL_COLORS)
 
-        val data = PieData(dataSet)
+                    valueTextSize = 12f
+                    valueTextColor = Color.WHITE
+                }
 
-        val pieChart = binding.pieChart
-        pieChart.apply {
-            this.data = data
-            setEntryLabelTextSize(13f)
-            setEntryLabelColor(Color.BLACK)
-            centerText = "statistics"
-            setCenterTextSize(15f)
-            animateY(750)
-            invalidate() //更新
+                analyticGraphLayout.timeEachCategoryGraphPieChart.apply {
+                    data = PieData(dataSet)
+                    centerText = "statistics"
+
+                    setEntryLabelTextSize(13f)
+                    setEntryLabelColor(Color.BLACK)
+                    setCenterTextSize(15f)
+
+                    animateY(750)
+                    invalidate() //更新
+                }
+            }
         }
     }
 }

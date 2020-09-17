@@ -5,6 +5,7 @@ import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.remote.firestore.FireStoreConstants
 import jp.co.cyberagent.dojo2020.data.remote.firestore.categoriesRef
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
@@ -34,8 +35,9 @@ class DefaultFirestoreCategoryDataSource(
             categoryEntityList ?: return@addSnapshotListener
 
             val categoryList = categoryEntityList.mapNotNull { it.modelOrNull() }
+
             offer(categoryList)
-        }
+        }.also { awaitClose { it.remove() } }
     }
 
     override suspend fun deleteCategory(uid: String, category: Category) {
