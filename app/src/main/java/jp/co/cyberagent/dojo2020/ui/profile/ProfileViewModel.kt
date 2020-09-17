@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import jp.co.cyberagent.dojo2020.DI
+import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.TimeEachCategory
-import jp.co.cyberagent.dojo2020.data.model.UserItem
+import jp.co.cyberagent.dojo2020.ui.create.spinner.SpinnerAdapter
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
@@ -27,30 +28,29 @@ class ProfileViewModel(context: Context) : ViewModel() {
         val uid = firebaseUserInfo?.uid
 
         memoRepository.fetchAllMemo(uid)
-            .combine(categoryRepository.fetchAllCategory(uid)) { memoList, categoryList ->
-                categoryList.map { category ->
+            .combine(categoryRepository.fetchAllCategory(uid)) { memoList, ownCategoryList ->
+                val defaultCategoryList = SpinnerAdapter.defaultItemList(context)
+                    .map { Category(it) }
+
+                val categoryList = ownCategoryList + defaultCategoryList
+
+                categoryList.mapNotNull { category ->
                     val totalTimeForEachCategory = memoList
                         .filter { it.category == category }
                         .fold(0L) { result, memo -> result + memo.time }
+                        .takeUnless { it == 0L }
 
-                    TimeEachCategory(totalTimeForEachCategory, category)
+                    totalTimeForEachCategory?.let { TimeEachCategory(it, category) }
                 }
             }
     }
 
+    val firebaseUserInfoLiveData = userFlow.asLiveData()
+
     @FlowPreview
-    val userItemListLiveData = profileFlow
-        .combine(timeEachCategoryFlow) { profile, timeEachCategory -> profile to timeEachCategory }
-        .combine(userFlow) { (profile, timeEachCategory), firebaseUser ->
-            val primaryAccount = firebaseUser.let { UserItem.PrimaryAccountItem(it) }
-            val secondaryAccountList =
-                profile?.accountList.orEmpty().map { UserItem.SecondaryAccountItem(it) }
-            val analytic = timeEachCategory.let { UserItem.AnalyticItem(it) }
+    val timeEachCategoryLiveData = timeEachCategoryFlow.asLiveData()
 
-            val userItemList = listOf(primaryAccount) + secondaryAccountList + analytic
-
-            userItemList
-        }
-        .asLiveData()
+    @FlowPreview
+    val profileLiveData = profileFlow.asLiveData()
 
 }
