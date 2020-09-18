@@ -1,11 +1,17 @@
 package jp.co.cyberagent.dojo2020.data
 
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import jp.co.cyberagent.dojo2020.data.local.ProfileDataSource
 import jp.co.cyberagent.dojo2020.data.model.Profile
 import jp.co.cyberagent.dojo2020.data.remote.firestore.profile.FireStoreProfileDataSource
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
+import javax.inject.Inject
 
 interface ProfileRepository {
     suspend fun saveProfile(uid: String?, profile: Profile)
@@ -13,7 +19,8 @@ interface ProfileRepository {
     fun fetchProfile(uid: String?): Flow<Profile?>
 }
 
-class DefaultProfileRepository(
+@ActivityScoped
+class DefaultProfileRepository @Inject constructor(
     private val localProfileDataSource: ProfileDataSource,
     private val remoteProfileDataSource: FireStoreProfileDataSource
 ) : ProfileRepository {
@@ -39,4 +46,13 @@ class DefaultProfileRepository(
 
         return profileFlow
     }
+}
+
+@Module
+@InstallIn(ActivityComponent::class)
+abstract class ProfileRepositoryModule {
+
+    @ActivityScoped
+    @Binds
+    abstract fun bindProfileRepository(defaultProfileRepository: DefaultProfileRepository): ProfileRepository
 }
