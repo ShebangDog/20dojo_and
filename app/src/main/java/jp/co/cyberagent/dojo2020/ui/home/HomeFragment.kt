@@ -19,7 +19,6 @@ import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Memo
 import jp.co.cyberagent.dojo2020.databinding.FragmentHomeBinding
-import jp.co.cyberagent.dojo2020.ui.TextAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.random.Random
 
