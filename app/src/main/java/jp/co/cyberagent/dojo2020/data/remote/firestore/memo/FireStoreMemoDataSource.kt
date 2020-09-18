@@ -29,6 +29,7 @@ interface FireStoreMemoDataSource {
     suspend fun deleteMemoById(uid: String, id: String)
 }
 
+@Singleton
 class DefaultFireStoreMemoDataSource @Inject constructor() : FireStoreMemoDataSource {
 
     private val firestore = Firebase.firestore
