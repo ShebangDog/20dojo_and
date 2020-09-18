@@ -10,10 +10,10 @@ import jp.co.cyberagent.dojo2020.data.local.*
 import jp.co.cyberagent.dojo2020.data.local.db.ApplicationDataBase
 import jp.co.cyberagent.dojo2020.data.remote.firestore.category.DefaultFirestoreCategoryDataSource
 import jp.co.cyberagent.dojo2020.data.remote.firestore.category.FirestoreCategoryDataSource
-import jp.co.cyberagent.dojo2020.data.remote.firestore.memo.DefaultFireStoreMemoDataSource
-import jp.co.cyberagent.dojo2020.data.remote.firestore.memo.FireStoreMemoDataSource
-import jp.co.cyberagent.dojo2020.data.remote.firestore.profile.DefaultFireStoreProfileDataSource
-import jp.co.cyberagent.dojo2020.data.remote.firestore.profile.FireStoreProfileDataSource
+import jp.co.cyberagent.dojo2020.data.remote.firestore.memo.DefaultFirestoreMemoDataSource
+import jp.co.cyberagent.dojo2020.data.remote.firestore.memo.FirestoreMemoDataSource
+import jp.co.cyberagent.dojo2020.data.remote.firestore.profile.DefaultFirestoreProfileDataSource
+import jp.co.cyberagent.dojo2020.data.remote.firestore.profile.FirestoreProfileDataSource
 
 object DI {
     private var memoRepository: MemoRepository? = null
@@ -22,11 +22,11 @@ object DI {
     private var userInfoRepository: UserInfoRepository? = null
     private var categoryRepository: CategoryRepository? = null
 
-    private var firestoreProfileDataSource: FireStoreProfileDataSource? = null
+    private var firestoreProfileDataSource: FirestoreProfileDataSource? = null
     private var profileDataSource: ProfileDataSource? = null
 
     private var memoDataSource: MemoDataSource? = null
-    private var firestoreMemoDataSource: FireStoreMemoDataSource? = null
+    private var firestoreMemoDataSource: FirestoreMemoDataSource? = null
 
     private var draftDataSource: DraftDataSource? = null
 
@@ -90,11 +90,11 @@ object DI {
         return userInfoRepository!!
     }
 
-    private fun injectDefaultFireStoreProfileDataSource(): FireStoreProfileDataSource {
+    private fun injectDefaultFireStoreProfileDataSource(): FirestoreProfileDataSource {
         if (firestoreProfileDataSource != null) return firestoreProfileDataSource!!
 
         val fireStore = injectFireStore()
-        firestoreProfileDataSource = DefaultFireStoreProfileDataSource(fireStore)
+        firestoreProfileDataSource = DefaultFirestoreProfileDataSource()
 
         return firestoreProfileDataSource!!
     }
@@ -108,11 +108,11 @@ object DI {
         return profileDataSource!!
     }
 
-    private fun injectDefaultFireStoreMemoDataSource(): FireStoreMemoDataSource {
+    private fun injectDefaultFireStoreMemoDataSource(): FirestoreMemoDataSource {
         if (firestoreMemoDataSource != null) return firestoreMemoDataSource!!
 
         val firestore = injectFireStore()
-        firestoreMemoDataSource = DefaultFireStoreMemoDataSource(firestore)
+        firestoreMemoDataSource = DefaultFirestoreMemoDataSource()
 
         return firestoreMemoDataSource!!
     }
@@ -155,7 +155,7 @@ object DI {
     private fun injectFirestoreCategoryDataSource(): FirestoreCategoryDataSource {
         if (firestoreCategoryDataSource != null) return firestoreCategoryDataSource!!
 
-        firestoreCategoryDataSource = DefaultFirestoreCategoryDataSource(injectFireStore())
+        firestoreCategoryDataSource = DefaultFirestoreCategoryDataSource()
 
         return firestoreCategoryDataSource!!
     }

@@ -1,12 +1,18 @@
 package jp.co.cyberagent.dojo2020.data
 
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import jp.co.cyberagent.dojo2020.data.local.MemoDataSource
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Memo
-import jp.co.cyberagent.dojo2020.data.remote.firestore.memo.FireStoreMemoDataSource
+import jp.co.cyberagent.dojo2020.data.remote.firestore.memo.FirestoreMemoDataSource
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
+import javax.inject.Inject
 
 interface MemoRepository {
     suspend fun saveMemo(uid: String?, memo: Memo)
@@ -20,9 +26,10 @@ interface MemoRepository {
     suspend fun deleteMemoById(uid: String?, id: String)
 }
 
-class DefaultMemoRepository(
+@ActivityScoped
+class DefaultMemoRepository @Inject constructor(
     private val localMemoDataSource: MemoDataSource,
-    private val remoteMemoDataSource: FireStoreMemoDataSource
+    private val remoteMemoDataSource: FirestoreMemoDataSource
 ) : MemoRepository {
 
     override suspend fun saveMemo(uid: String?, memo: Memo) {
@@ -86,4 +93,13 @@ class DefaultMemoRepository(
 
         remoteMemoDataSource.deleteMemoById(uid, id)
     }
+}
+
+@Module
+@InstallIn(ActivityComponent::class)
+abstract class MemoModule {
+
+    @ActivityScoped
+    @Binds
+    abstract fun bindMemoRepository(defaultMemoRepository: DefaultMemoRepository): MemoRepository
 }

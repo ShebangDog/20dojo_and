@@ -12,17 +12,17 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
+import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.databinding.FragmentProfileBinding
 import jp.co.cyberagent.dojo2020.ui.ext.showImage
 import kotlinx.coroutines.FlowPreview
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
 
-    private val profileViewModel: ProfileViewModel by viewModels {
-        ProfileViewModelFactory(this, Bundle(), requireContext())
-    }
+    private val profileViewModel by viewModels<ProfileViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

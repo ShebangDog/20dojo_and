@@ -9,7 +9,6 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import jp.co.cyberagent.dojo2020.databinding.LayoutBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
-import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModelFactory
 
 class CustomBottomSheetDialog : BottomSheetDialogFragment() {
     companion object {
@@ -17,9 +16,7 @@ class CustomBottomSheetDialog : BottomSheetDialogFragment() {
     }
 
     private lateinit var binding: LayoutBottomSheetBinding
-    private val memoCreateViewModel by activityViewModels<MemoCreateViewModel> {
-        MemoCreateViewModelFactory(requireContext())
-    }
+    private val memoCreateViewModel by activityViewModels<MemoCreateViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

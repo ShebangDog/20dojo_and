@@ -14,6 +14,7 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Memo
@@ -22,11 +23,10 @@ import jp.co.cyberagent.dojo2020.ui.TextAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.random.Random
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private val homeViewModel by viewModels<HomeViewModel> {
-        HomeViewModelFactory(this, Bundle(), requireContext())
-    }
+    private val homeViewModel by viewModels<HomeViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
