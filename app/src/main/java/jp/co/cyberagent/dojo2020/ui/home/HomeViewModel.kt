@@ -1,13 +1,13 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import jp.co.cyberagent.dojo2020.DI
-import jp.co.cyberagent.dojo2020.data.DefaultUserInfoRepository
+import jp.co.cyberagent.dojo2020.data.DraftRepository
+import jp.co.cyberagent.dojo2020.data.MemoRepository
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
 import jp.co.cyberagent.dojo2020.data.model.Memo
 import jp.co.cyberagent.dojo2020.data.model.toText
@@ -17,10 +17,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
-class HomeViewModel(context: Context) : ViewModel() {
-    private val draftRepository = DI.injectDefaultDraftRepository(context)
-    private val memoRepository = DI.injectDefaultMemoRepository(context)
-    private val firebaseUserInfoRepository: UserInfoRepository = DefaultUserInfoRepository()
+class HomeViewModel @ViewModelInject constructor(
+    private val draftRepository: DraftRepository,
+    private val memoRepository: MemoRepository,
+    firebaseUserInfoRepository: UserInfoRepository
+) : ViewModel() {
 
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
     val userLiveData = userFlow.asLiveData()
@@ -39,7 +40,6 @@ class HomeViewModel(context: Context) : ViewModel() {
                 leftList + rightList
             }
     }.asLiveData()
-
 
     fun filter() = viewModelScope.launch {
         userFlow.collect { userInfo ->

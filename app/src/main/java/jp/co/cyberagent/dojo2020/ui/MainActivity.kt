@@ -10,11 +10,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.remote.auth.FirebaseAuthentication
 import jp.co.cyberagent.dojo2020.databinding.ActivityMainBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navigationController: NavController
