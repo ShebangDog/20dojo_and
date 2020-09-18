@@ -55,8 +55,8 @@ class TextAdapter(private val onItemClickListener: View.OnClickListener) :
             }
 
             when (text) {
-                is Left -> setDraft(text.value)
-                is Right -> setMemo(text.value)
+                is Text.Left -> setDraft(text.value)
+                is Text.Right -> setMemo(text.value)
             }
         }
 
