@@ -25,7 +25,7 @@ class MemoCreateFragment : Fragment() {
     private lateinit var binding: FragmentMemoCreateBinding
 
     private val memoCreateViewModel by activityViewModels<MemoCreateViewModel> {
-        MemoCreateViewModelFactory(this, Bundle(), requireContext())
+        MemoCreateViewModelFactory(requireContext())
     }
 
     override fun onCreateView(
