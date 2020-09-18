@@ -1,22 +1,15 @@
 package jp.co.cyberagent.dojo2020.ui.create
 
 import android.content.Context
-import android.os.Bundle
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.savedstate.SavedStateRegistryOwner
+import androidx.lifecycle.ViewModelProvider
 
 @Suppress("UNCHECKED_CAST")
 class MemoCreateViewModelFactory(
-    owner: SavedStateRegistryOwner,
-    defaultArgs: Bundle,
     private val context: Context
-) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return MemoCreateViewModel(context) as T
+    }
 
-    override fun <T : ViewModel?> create(
-        key: String,
-        modelClass: Class<T>,
-        handle: SavedStateHandle
-    ): T = MemoCreateViewModel(context) as T
 }

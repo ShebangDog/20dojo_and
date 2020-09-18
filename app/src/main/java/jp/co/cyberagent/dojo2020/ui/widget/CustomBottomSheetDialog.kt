@@ -18,11 +18,7 @@ class CustomBottomSheetDialog : BottomSheetDialogFragment() {
 
     private lateinit var binding: LayoutBottomSheetBinding
     private val memoCreateViewModel by activityViewModels<MemoCreateViewModel> {
-        MemoCreateViewModelFactory(
-            this,
-            Bundle(),
-            requireContext()
-        )
+        MemoCreateViewModelFactory(requireContext())
     }
 
     override fun onCreateView(

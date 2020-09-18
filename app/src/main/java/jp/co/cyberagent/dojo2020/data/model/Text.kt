@@ -5,10 +5,10 @@ sealed class Text(
     val title: String,
     val contents: String,
     val category: Category
-)
+) {
+    data class Left(val value: Draft) : Text(value.id, value.title, value.content, value.category)
+    data class Right(val value: Memo) : Text(value.id, value.title, value.contents, value.category)
+}
 
-data class Left(val value: Draft) : Text(value.id, value.title, value.content, value.category)
-data class Right(val value: Memo) : Text(value.id, value.title, value.contents, value.category)
-
-fun Draft.toText(): Text = Left(this)
-fun Memo.toText(): Text = Right(this)
+fun Draft.toText(): Text = Text.Left(this)
+fun Memo.toText(): Text = Text.Right(this)
