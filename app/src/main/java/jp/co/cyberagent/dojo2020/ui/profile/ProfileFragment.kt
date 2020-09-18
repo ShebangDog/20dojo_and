@@ -21,7 +21,7 @@ class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
 
     private val profileViewModel: ProfileViewModel by viewModels {
-        ProfileViewModelFactory(this, Bundle(), requireContext())
+        ProfileViewModelFactory(requireContext())
     }
 
     override fun onCreateView(

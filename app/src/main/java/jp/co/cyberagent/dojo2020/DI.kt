@@ -112,7 +112,7 @@ object DI {
         if (firestoreMemoDataSource != null) return firestoreMemoDataSource!!
 
         val firestore = injectFireStore()
-        firestoreMemoDataSource = DefaultFireStoreMemoDataSource(firestore)
+        firestoreMemoDataSource = DefaultFireStoreMemoDataSource()
 
         return firestoreMemoDataSource!!
     }
