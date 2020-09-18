@@ -3,15 +3,24 @@ package jp.co.cyberagent.dojo2020.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import jp.co.cyberagent.dojo2020.R
-import jp.co.cyberagent.dojo2020.data.model.*
+import jp.co.cyberagent.dojo2020.data.model.Draft
+import jp.co.cyberagent.dojo2020.data.model.Memo
+import jp.co.cyberagent.dojo2020.data.model.Text
 import jp.co.cyberagent.dojo2020.databinding.ItemMemoBinding
 import jp.co.cyberagent.dojo2020.ui.ext.showImage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.Collections.emptyList
+import java.util.concurrent.TimeUnit
 
-class TextAdapter(private val onItemClickListener: View.OnClickListener) :
-    RecyclerView.Adapter<TextAdapter.RecyclerViewHolder>() {
+class TextAdapter(
+    private val homeViewModel: HomeViewModel,
+    private val lifecycleOwner: LifecycleOwner,
+    private val onItemClickListener: View.OnClickListener
+) : RecyclerView.Adapter<TextAdapter.RecyclerViewHolder>() {
 
     var textList: List<Text> = emptyList()
         set(value) {
@@ -20,13 +29,16 @@ class TextAdapter(private val onItemClickListener: View.OnClickListener) :
         }
 
     class RecyclerViewHolder(
-        private val binding: ItemMemoBinding
+        private val binding: ItemMemoBinding,
+        private val homeViewModel: HomeViewModel,
+        private val lifecycleOwner: LifecycleOwner
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun setOnItemClickListener(onItemClickListener: View.OnClickListener) {
             itemView.setOnClickListener(onItemClickListener)
         }
 
+        @ExperimentalCoroutinesApi
         fun setText(text: Text) {
             binding.apply {
                 titleTextView.text = text.title
@@ -60,12 +72,37 @@ class TextAdapter(private val onItemClickListener: View.OnClickListener) :
             }
         }
 
-        private fun setDraft(draft: Draft) {
+        private fun setMemo(memo: Memo) = binding.apply {
 
         }
 
-        private fun setMemo(memo: Memo) {
+        @ExperimentalCoroutinesApi
+        private fun setDraft(draft: Draft) = binding.apply {
+            val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
+                System.currentTimeMillis() - draft.startTime
+            )
 
+            homeViewModel.timeLiveData(currentSeconds).observe(lifecycleOwner) { rawSeconds ->
+                val hour = TimeUnit.SECONDS.toHours(rawSeconds)
+
+                val minutes =
+                    TimeUnit.SECONDS.toMinutes(rawSeconds - TimeUnit.HOURS.toSeconds(hour))
+
+                val seconds =
+                    rawSeconds - TimeUnit.HOURS.toSeconds(hour) - TimeUnit.MINUTES.toSeconds(minutes)
+
+                val timeAsText = listOf(hour, minutes, seconds)
+                    .map { it.toString() }
+                    .joinToString(":") { if (it.length == 1) "0$it" else it }
+
+                timeTextView.text = timeAsText
+            }
+
+            timerImageButton.setOnClickListener {
+                it.isSelected = !it.isSelected
+
+                (it as ImageButton).showImage(this, R.drawable.ic_starting_timer)
+            }
         }
 
         private fun visibleOrGone(isVisible: Boolean) = if (isVisible) View.VISIBLE else View.GONE
@@ -84,9 +121,10 @@ class TextAdapter(private val onItemClickListener: View.OnClickListener) :
         val inflater = LayoutInflater.from(parent.context)
         val binding: ItemMemoBinding = ItemMemoBinding.inflate(inflater, parent, false)
 
-        return RecyclerViewHolder(binding)
+        return RecyclerViewHolder(binding, homeViewModel, lifecycleOwner)
     }
 
+    @ExperimentalCoroutinesApi
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
         val text = textList[position]
 

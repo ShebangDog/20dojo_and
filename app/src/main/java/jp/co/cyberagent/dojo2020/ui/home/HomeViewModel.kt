@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import jp.co.cyberagent.dojo2020.data.DraftRepository
+import jp.co.cyberagent.dojo2020.data.FlowTimer
 import jp.co.cyberagent.dojo2020.data.MemoRepository
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
 import jp.co.cyberagent.dojo2020.data.model.Memo
@@ -27,12 +28,14 @@ class HomeViewModel @ViewModelInject constructor(
     val userLiveData = userFlow.asLiveData()
 
     @ExperimentalCoroutinesApi
+    fun timeLiveData(startTime: Long) = FlowTimer().timerFlow(startTime).asLiveData()
+
+    @ExperimentalCoroutinesApi
     val textListLiveData = userFlow.flatMapLatest { userInfo ->
         val uid = userInfo?.uid
 
         draftRepository.fetchAllDraft()
             .combine(memoRepository.fetchAllMemo(uid)) { draftList, memoList ->
-                Log.d(TAG, "combine in HomeViewModel")
 
                 val rightList = memoList.map { it.toText() }
                 val leftList = draftList.map { it.toText() }
