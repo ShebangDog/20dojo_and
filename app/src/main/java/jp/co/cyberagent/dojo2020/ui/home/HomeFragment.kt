@@ -41,6 +41,17 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val linearLayoutManager = LinearLayoutManager(
+            context,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+
+        val memoAdapter = TextAdapter(homeViewModel, viewLifecycleOwner) {
+            val action = HomeFragmentDirections.actionHomeFragmentToMemoEditFragment("test_id")
+            findNavController().navigate(action)
+        }
+
         with(binding) {
             addFloatingActionButton.setOnClickListener { showMemoCreate() }
             profileToolBarLayout.apply {
@@ -66,25 +77,14 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            val linearLayoutManager = LinearLayoutManager(
-                context,
-                LinearLayoutManager.VERTICAL,
-                false
-            )
-
-            val memoAdapter = TextAdapter {
-                val action = HomeFragmentDirections.actionHomeFragmentToMemoEditFragment("test_id")
-                findNavController().navigate(action)
-            }
-
-            homeViewModel.textListLiveData.observe(viewLifecycleOwner) { textList ->
-                memoAdapter.textList = textList
-            }
-
             recyclerView.apply {
                 setHasFixedSize(true)
                 layoutManager = linearLayoutManager
                 adapter = memoAdapter
+            }
+
+            homeViewModel.textListLiveData.observe(viewLifecycleOwner) { textList ->
+                memoAdapter.textList = textList
             }
         }
     }
