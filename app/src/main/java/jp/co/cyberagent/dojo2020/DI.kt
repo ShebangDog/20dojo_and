@@ -94,7 +94,7 @@ object DI {
         if (firestoreProfileDataSource != null) return firestoreProfileDataSource!!
 
         val fireStore = injectFireStore()
-        firestoreProfileDataSource = DefaultFireStoreProfileDataSource(fireStore)
+        firestoreProfileDataSource = DefaultFireStoreProfileDataSource()
 
         return firestoreProfileDataSource!!
     }

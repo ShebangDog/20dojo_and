@@ -1,9 +1,13 @@
 package jp.co.cyberagent.dojo2020.ui.profile
 
-import android.content.Context
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
-import jp.co.cyberagent.dojo2020.DI
+import jp.co.cyberagent.dojo2020.data.CategoryRepository
+import jp.co.cyberagent.dojo2020.data.MemoRepository
+import jp.co.cyberagent.dojo2020.data.ProfileRepository
+import jp.co.cyberagent.dojo2020.data.UserInfoRepository
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.TimeEachCategory
 import jp.co.cyberagent.dojo2020.ui.create.spinner.SpinnerAdapter
@@ -11,12 +15,13 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
 
-class ProfileViewModel(context: Context) : ViewModel() {
-
-    private val firebaseUserInfoRepository = DI.injectDefaultUserInfoRepository()
-    private val profileRepository = DI.injectDefaultProfileRepository(context)
-    private val memoRepository = DI.injectDefaultMemoRepository(context)
-    private val categoryRepository = DI.injectDefaultCategoryRepository(context)
+class ProfileViewModel @ViewModelInject constructor(
+    private val profileRepository: ProfileRepository,
+    private val memoRepository: MemoRepository,
+    private val categoryRepository: CategoryRepository,
+    firebaseUserInfoRepository: UserInfoRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
 
@@ -29,8 +34,9 @@ class ProfileViewModel(context: Context) : ViewModel() {
 
         memoRepository.fetchAllMemo(uid)
             .combine(categoryRepository.fetchAllCategory(uid)) { memoList, ownCategoryList ->
-                val defaultCategoryList = SpinnerAdapter.defaultItemList(context)
-                    .map { Category(it) }
+                val defaultCategoryList =
+                    SpinnerAdapter.defaultItemList(application.applicationContext)
+                        .map { Category(it) }
 
                 val categoryList = ownCategoryList + defaultCategoryList
 
