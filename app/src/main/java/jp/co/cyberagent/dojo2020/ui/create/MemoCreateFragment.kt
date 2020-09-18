@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.databinding.FragmentMemoCreateBinding
 import jp.co.cyberagent.dojo2020.ui.create.spinner.CustomOnItemSelectedListener
@@ -19,13 +20,12 @@ import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog
 import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog.Companion.TAG
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@AndroidEntryPoint
 class MemoCreateFragment : Fragment() {
     private lateinit var activityInFragment: AppCompatActivity
     private lateinit var binding: FragmentMemoCreateBinding
 
-    private val memoCreateViewModel by activityViewModels<MemoCreateViewModel> {
-        MemoCreateViewModelFactory(requireContext())
-    }
+    private val memoCreateViewModel by activityViewModels<MemoCreateViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

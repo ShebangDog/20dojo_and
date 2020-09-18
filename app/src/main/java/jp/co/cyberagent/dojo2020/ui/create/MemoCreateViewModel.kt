@@ -1,10 +1,12 @@
 package jp.co.cyberagent.dojo2020.ui.create
 
-import android.content.Context
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import jp.co.cyberagent.dojo2020.DI
+import jp.co.cyberagent.dojo2020.data.CategoryRepository
+import jp.co.cyberagent.dojo2020.data.DraftRepository
+import jp.co.cyberagent.dojo2020.data.UserInfoRepository
 import jp.co.cyberagent.dojo2020.data.ext.accessWithUid
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Draft
@@ -14,10 +16,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.*
 
-class MemoCreateViewModel(context: Context) : ViewModel() {
-    private val draftRepository = DI.injectDefaultDraftRepository(context)
-    private val categoryRepository = DI.injectDefaultCategoryRepository(context)
-    private val userInfoRepository = DI.injectDefaultUserInfoRepository()
+class MemoCreateViewModel @ViewModelInject constructor(
+    private val draftRepository: DraftRepository,
+    private val categoryRepository: CategoryRepository,
+    userInfoRepository: UserInfoRepository
+) : ViewModel() {
 
     private val userInfoFlow = userInfoRepository.fetchUserInfo()
 

@@ -155,7 +155,7 @@ object DI {
     private fun injectFirestoreCategoryDataSource(): FirestoreCategoryDataSource {
         if (firestoreCategoryDataSource != null) return firestoreCategoryDataSource!!
 
-        firestoreCategoryDataSource = DefaultFirestoreCategoryDataSource(injectFireStore())
+        firestoreCategoryDataSource = DefaultFirestoreCategoryDataSource()
 
         return firestoreCategoryDataSource!!
     }
