@@ -1,6 +1,6 @@
 package jp.co.cyberagent.dojo2020.data.remote.firestore
 
-object FireStoreConstants {
+object FirestoreConstants {
     const val USERS = "users"
     const val MEMOS = "memos"
     const val PROFILE = "profile"

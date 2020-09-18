@@ -8,7 +8,7 @@ import dagger.hilt.android.scopes.ActivityScoped
 import jp.co.cyberagent.dojo2020.data.local.MemoDataSource
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Memo
-import jp.co.cyberagent.dojo2020.data.remote.firestore.memo.FireStoreMemoDataSource
+import jp.co.cyberagent.dojo2020.data.remote.firestore.memo.FirestoreMemoDataSource
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
@@ -29,7 +29,7 @@ interface MemoRepository {
 @ActivityScoped
 class DefaultMemoRepository @Inject constructor(
     private val localMemoDataSource: MemoDataSource,
-    private val remoteMemoDataSource: FireStoreMemoDataSource
+    private val remoteMemoDataSource: FirestoreMemoDataSource
 ) : MemoRepository {
 
     override suspend fun saveMemo(uid: String?, memo: Memo) {

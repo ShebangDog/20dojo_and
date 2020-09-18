@@ -8,7 +8,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import jp.co.cyberagent.dojo2020.data.model.Category
-import jp.co.cyberagent.dojo2020.data.remote.firestore.FireStoreConstants
+import jp.co.cyberagent.dojo2020.data.remote.firestore.FirestoreConstants
 import jp.co.cyberagent.dojo2020.data.remote.firestore.categoriesRef
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -50,7 +50,7 @@ class DefaultFirestoreCategoryDataSource @Inject constructor() : FirestoreCatego
 
     override suspend fun deleteCategory(uid: String, category: Category) {
         val snapshot = firestore.categoriesRef(uid)
-            .whereEqualTo(FireStoreConstants.CATEGORY, category)
+            .whereEqualTo(FirestoreConstants.CATEGORY, category)
             .get()
             .await()
 

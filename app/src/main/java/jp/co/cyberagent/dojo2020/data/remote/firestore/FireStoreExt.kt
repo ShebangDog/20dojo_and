@@ -6,24 +6,24 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 fun FirebaseFirestore.memosRef(uid: String): CollectionReference {
     return this
-        .collection(FireStoreConstants.USERS)
+        .collection(FirestoreConstants.USERS)
         .document(uid)
-        .collection(FireStoreConstants.MEMOS)
+        .collection(FirestoreConstants.MEMOS)
 }
 
 fun FirebaseFirestore.profileRef(uid: String): DocumentReference {
     return this
-        .collection(FireStoreConstants.USERS)
+        .collection(FirestoreConstants.USERS)
         .document(uid)
-        .collection(FireStoreConstants.PROFILE)
-        .document(FireStoreConstants.YOUR)
+        .collection(FirestoreConstants.PROFILE)
+        .document(FirestoreConstants.YOUR)
 }
 
 fun FirebaseFirestore.categoriesRef(uid: String): CollectionReference {
     return this
-        .collection(FireStoreConstants.USERS)
+        .collection(FirestoreConstants.USERS)
         .document(uid)
-        .collection(FireStoreConstants.CATEGORY)
+        .collection(FirestoreConstants.CATEGORY)
 }
 
 fun CollectionReference.document(id: Int): DocumentReference {

@@ -7,7 +7,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import jp.co.cyberagent.dojo2020.data.model.Memo
-import jp.co.cyberagent.dojo2020.data.remote.firestore.FireStoreConstants
+import jp.co.cyberagent.dojo2020.data.remote.firestore.FirestoreConstants
 import jp.co.cyberagent.dojo2020.data.remote.firestore.memosRef
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -17,7 +17,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface FireStoreMemoDataSource {
+interface FirestoreMemoDataSource {
     suspend fun saveMemo(uid: String, memo: Memo)
 
     fun fetchAllMemo(uid: String): Flow<List<Memo>>
@@ -30,7 +30,7 @@ interface FireStoreMemoDataSource {
 }
 
 @Singleton
-class DefaultFireStoreMemoDataSource @Inject constructor() : FireStoreMemoDataSource {
+class DefaultFirestoreMemoDataSource @Inject constructor() : FirestoreMemoDataSource {
 
     private val firestore = Firebase.firestore
 
@@ -62,7 +62,7 @@ class DefaultFireStoreMemoDataSource @Inject constructor() : FireStoreMemoDataSo
     ) = callbackFlow {
 
         firestore.memosRef(uid)
-            .whereEqualTo(FireStoreConstants.CATEGORY, category)
+            .whereEqualTo(FirestoreConstants.CATEGORY, category)
             .addSnapshotListener { snapshot, exception ->
                 exception?.message?.run { return@addSnapshotListener }
 
@@ -104,5 +104,5 @@ abstract class FirestoreMemoDataSourceModule {
 
     @Singleton
     @Binds
-    abstract fun bindFirestoreMemoDataSource(defaultFireStoreMemoDataSource: DefaultFireStoreMemoDataSource): FireStoreMemoDataSource
+    abstract fun bindFirestoreMemoDataSource(defaultFirestoreMemoDataSource: DefaultFirestoreMemoDataSource): FirestoreMemoDataSource
 }

@@ -15,14 +15,14 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface FireStoreProfileDataSource {
+interface FirestoreProfileDataSource {
     suspend fun saveProfile(uid: String, profile: Profile)
 
     fun fetchProfile(uid: String): Flow<Profile?>
 }
 
 @Singleton
-class DefaultFireStoreProfileDataSource @Inject constructor() : FireStoreProfileDataSource {
+class DefaultFirestoreProfileDataSource @Inject constructor() : FirestoreProfileDataSource {
 
     private val firestore = Firebase.firestore
 
@@ -46,9 +46,9 @@ class DefaultFireStoreProfileDataSource @Inject constructor() : FireStoreProfile
 
 @Module
 @InstallIn(ApplicationComponent::class)
-abstract class FireStoreProfileDataSourceModule {
+abstract class FirestoreProfileDataSourceModule {
 
     @Singleton
     @Binds
-    abstract fun bindFireStoreProfileDataSource(defaultFireStoreProfileDataSource: DefaultFireStoreProfileDataSource): FireStoreProfileDataSource
+    abstract fun bindFirestoreProfileDataSource(defaultFirestoreProfileDataSource: DefaultFirestoreProfileDataSource): FirestoreProfileDataSource
 }
