@@ -1,11 +1,17 @@
 package jp.co.cyberagent.dojo2020.data
 
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import jp.co.cyberagent.dojo2020.data.local.CategoryDataSource
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.remote.firestore.category.FirestoreCategoryDataSource
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
+import javax.inject.Inject
 
 interface CategoryRepository {
     suspend fun saveCategory(uid: String?, category: Category)
@@ -15,7 +21,8 @@ interface CategoryRepository {
     suspend fun deleteCategory(uid: String?, category: Category)
 }
 
-class DefaultCategoryRepository(
+@ActivityScoped
+class DefaultCategoryRepository @Inject constructor(
     private val localCategoryDataSource: CategoryDataSource,
     private val remoteCategoryFirestoreDataSource: FirestoreCategoryDataSource
 ) : CategoryRepository {
@@ -48,4 +55,13 @@ class DefaultCategoryRepository(
 
         remoteCategoryFirestoreDataSource.deleteCategory(uid, category)
     }
+}
+
+@Module
+@InstallIn(ActivityComponent::class)
+abstract class CategoryRepositoryModule {
+
+    @ActivityScoped
+    @Binds
+    abstract fun bindCategoryRepository(defaultCategoryRepository: DefaultCategoryRepository): CategoryRepository
 }
