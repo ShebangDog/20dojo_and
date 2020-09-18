@@ -1,8 +1,14 @@
 package jp.co.cyberagent.dojo2020.data
 
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import jp.co.cyberagent.dojo2020.data.local.DraftDataSource
 import jp.co.cyberagent.dojo2020.data.model.Draft
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 interface DraftRepository {
     suspend fun saveDraft(draft: Draft)
@@ -16,7 +22,11 @@ interface DraftRepository {
     suspend fun deleteDraftById(id: String)
 }
 
-class DefaultDraftRepository(private val draftDataSource: DraftDataSource) : DraftRepository {
+@ActivityScoped
+class DefaultDraftRepository @Inject constructor(
+    private val draftDataSource: DraftDataSource
+) : DraftRepository {
+
     override suspend fun saveDraft(draft: Draft) {
         draftDataSource.saveDraft(draft)
     }
@@ -36,4 +46,13 @@ class DefaultDraftRepository(private val draftDataSource: DraftDataSource) : Dra
     override suspend fun deleteDraftById(id: String) {
         return draftDataSource.deleteDraftById(id)
     }
+}
+
+@Module
+@InstallIn(ActivityComponent::class)
+abstract class DraftRepositoryModule {
+
+    @ActivityScoped
+    @Binds
+    abstract fun bindDraftRepository(defaultDraftRepository: DefaultDraftRepository): DraftRepository
 }

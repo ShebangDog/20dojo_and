@@ -1,10 +1,16 @@
 package jp.co.cyberagent.dojo2020.data.local
 
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import jp.co.cyberagent.dojo2020.data.local.db.ApplicationDataBase
 import jp.co.cyberagent.dojo2020.data.local.db.draft.DraftEntity
 import jp.co.cyberagent.dojo2020.data.model.Draft
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface DraftDataSource {
     suspend fun saveDraft(draft: Draft)
@@ -18,7 +24,10 @@ interface DraftDataSource {
     suspend fun deleteDraftById(id: String)
 }
 
-class DefaultDraftDataSource(private val database: ApplicationDataBase) : DraftDataSource {
+class DefaultDraftDataSource @Inject constructor(
+    private val database: ApplicationDataBase
+) : DraftDataSource {
+
     override suspend fun saveDraft(draft: Draft) {
         database.draftDao().insert(draft.toEntityForLocal())
     }
@@ -46,4 +55,13 @@ class DefaultDraftDataSource(private val database: ApplicationDataBase) : DraftD
     private fun Draft.toEntityForLocal(): DraftEntity {
         return DraftEntity(id, title, content, startTime, category)
     }
+}
+
+@Module
+@InstallIn(ApplicationComponent::class)
+abstract class DraftDataSourceModule {
+
+    @Singleton
+    @Binds
+    abstract fun bindDraftDataSource(defaultDraftDataSource: DefaultDraftDataSource): DraftDataSource
 }
