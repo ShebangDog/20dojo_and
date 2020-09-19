@@ -1,7 +1,5 @@
 package jp.co.cyberagent.dojo2020.data
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import jp.co.cyberagent.dojo2020.data.timer.TimerDataSource
@@ -31,12 +29,7 @@ class FlowTimer private constructor() {
 
         @ExperimentalCoroutinesApi
         fun instance(id: String) = hashInstance.getOrElse(id) {
-            Log.d(TAG, "[$id] first making")
-            FlowTimer()
-                .timeFlow
-                .asLiveData()
-                .also { hashInstance[id] = it }
-
-        }.also { Log.d(TAG, "got instance") }
+            FlowTimer().timeFlow.asLiveData().also { hashInstance[id] = it }
+        }
     }
 }
