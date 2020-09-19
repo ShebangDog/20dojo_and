@@ -1,7 +1,5 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -54,10 +52,7 @@ class HomeViewModel @ViewModelInject constructor(
     }
 
     fun saveMemo(memo: Memo) = viewModelScope.launch {
-        userFlow.collect { userInfo ->
-            memoRepository.saveMemo(userInfo?.uid, memo)
-            Log.d(TAG, "uid is ${userInfo?.uid}")
-        }
+        userFlow.collect { userInfo -> memoRepository.saveMemo(userInfo?.uid, memo) }
     }
 
     fun deleteDraft(draft: Draft) = viewModelScope.launch {
