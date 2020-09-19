@@ -1,6 +1,5 @@
 package jp.co.cyberagent.dojo2020.ui.profile
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
 import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
@@ -78,27 +75,29 @@ class ProfileFragment : Fragment() {
 
             }
 
-            profileViewModel.timeEachCategoryLiveData.observe(viewLifecycleOwner) { timeEachCategoryList ->
-                val pieEntryList = timeEachCategoryList
-                    .map { PieEntry(it.time.toFloat(), it.category.name) }
+            profileViewModel.pieDataSetLiveData(
+                "Category",
+                ColorTemplate.MATERIAL_COLORS,
+                ProfileViewModel.ValueView.Default
+            ).observe(viewLifecycleOwner) { dataSet ->
+                analyticGraphLayout.timeEachCategoryGraphPieChart.apply {
+                    data = PieData(dataSet)
 
-                val dataSet = PieDataSet(pieEntryList, "category").apply {
-                    setColors(*ColorTemplate.JOYFUL_COLORS)
+                    animateY(750)
+                    invalidate()
+                }
+            }
 
-                    valueTextSize = 12f
-                    valueTextColor = Color.WHITE
+            profileViewModel.totalTimeLiveData.observe(viewLifecycleOwner) { totalTime ->
+                totalTimeLayout.apply {
+                    nameTextView.text = getString(R.string.TotalTime)
+                    valueTextView.text = totalTime.toString()
                 }
 
                 analyticGraphLayout.timeEachCategoryGraphPieChart.apply {
-                    data = PieData(dataSet)
-                    centerText = "statistics"
+                    centerText = "TotalTime\n${totalTime}"
 
-                    setEntryLabelTextSize(13f)
-                    setEntryLabelColor(Color.BLACK)
-                    setCenterTextSize(15f)
-
-                    animateY(750)
-                    invalidate() //更新
+                    invalidate()
                 }
             }
         }
