@@ -3,15 +3,25 @@ package jp.co.cyberagent.dojo2020.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import androidx.annotation.DrawableRes
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import jp.co.cyberagent.dojo2020.R
-import jp.co.cyberagent.dojo2020.data.model.*
+import jp.co.cyberagent.dojo2020.data.model.Draft
+import jp.co.cyberagent.dojo2020.data.model.Memo
+import jp.co.cyberagent.dojo2020.data.model.Text
 import jp.co.cyberagent.dojo2020.databinding.ItemMemoBinding
 import jp.co.cyberagent.dojo2020.ui.ext.showImage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.Collections.emptyList
+import java.util.concurrent.TimeUnit
 
-class TextAdapter(private val onItemClickListener: View.OnClickListener) :
-    RecyclerView.Adapter<TextAdapter.RecyclerViewHolder>() {
+class TextAdapter(
+    private val homeViewModel: HomeViewModel,
+    private val lifecycleOwner: LifecycleOwner,
+    private val onItemClickListener: View.OnClickListener
+) : RecyclerView.Adapter<TextAdapter.RecyclerViewHolder>() {
 
     var textList: List<Text> = emptyList()
         set(value) {
@@ -20,13 +30,28 @@ class TextAdapter(private val onItemClickListener: View.OnClickListener) :
         }
 
     class RecyclerViewHolder(
-        private val binding: ItemMemoBinding
+        private val binding: ItemMemoBinding,
+        private val homeViewModel: HomeViewModel,
+        private val lifecycleOwner: LifecycleOwner
     ) : RecyclerView.ViewHolder(binding.root) {
+
+        @DrawableRes
+        private val isStartingIcon = R.drawable.ic_starting_timer
+
+        @DrawableRes
+        private val isStoppingIcon = R.drawable.ic_stopping_timer
+
+        @DrawableRes
+        private val expandLessIcon = R.drawable.ic_expand_less
+
+        @DrawableRes
+        private val expandMoreIcon = R.drawable.ic_expand_more
 
         fun setOnItemClickListener(onItemClickListener: View.OnClickListener) {
             itemView.setOnClickListener(onItemClickListener)
         }
 
+        @ExperimentalCoroutinesApi
         fun setText(text: Text) {
             binding.apply {
                 titleTextView.text = text.title
@@ -41,8 +66,8 @@ class TextAdapter(private val onItemClickListener: View.OnClickListener) :
                     }
 
                     expandImageButton.showImage(
-                        binding,
-                        if (it.isSelected) R.drawable.ic_expand_less else R.drawable.ic_expand_more
+                        this,
+                        if (it.isSelected) expandLessIcon else expandMoreIcon
                     )
                 }
 
@@ -60,18 +85,51 @@ class TextAdapter(private val onItemClickListener: View.OnClickListener) :
             }
         }
 
-        private fun setDraft(draft: Draft) {
-
+        private fun setMemo(memo: Memo) = binding.apply {
+            timeTextView.text = millsToFormattedTime(memo.time)
         }
 
-        private fun setMemo(memo: Memo) {
+        @ExperimentalCoroutinesApi
+        private fun setDraft(draft: Draft) = binding.apply {
+            val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
+                System.currentTimeMillis() - draft.startTime
+            )
 
+            val timeLiveData = homeViewModel.timeLiveData(currentSeconds)
+            timeLiveData.observe(lifecycleOwner) { timeTextView.text = millsToFormattedTime(it) }
+
+            timerImageButton.setOnClickListener { view ->
+                view.isSelected = !view.isSelected
+
+                timeLiveData.value?.also {
+                    homeViewModel.saveMemo(draft.toMemo(it))
+                    homeViewModel.deleteDraft(draft)
+                }
+
+                (view as ImageButton).showImage(
+                    this,
+                    if (view.isSelected) isStartingIcon else isStoppingIcon
+                )
+
+                timeLiveData.removeObservers(lifecycleOwner)
+            }
         }
 
         private fun visibleOrGone(isVisible: Boolean) = if (isVisible) View.VISIBLE else View.GONE
 
         private fun String.toOneLine(): String =
             if (this.contains("\n")) takeWhile { it != '\n' } + stringTerminated else this
+
+        private fun millsToFormattedTime(totalTime: Long): String {
+            val hours = TimeUnit.SECONDS.toHours(totalTime)
+            val minutes = TimeUnit.SECONDS.toMinutes(totalTime - TimeUnit.HOURS.toSeconds(hours))
+            val seconds =
+                totalTime - TimeUnit.HOURS.toSeconds(hours) - TimeUnit.MINUTES.toSeconds(minutes)
+
+            return listOf(hours, minutes, seconds)
+                .map { it.toString() }
+                .joinToString(":") { if (it.length == 1) "0$it" else it }
+        }
 
         companion object {
             private const val stringTerminated = "..."
@@ -84,9 +142,10 @@ class TextAdapter(private val onItemClickListener: View.OnClickListener) :
         val inflater = LayoutInflater.from(parent.context)
         val binding: ItemMemoBinding = ItemMemoBinding.inflate(inflater, parent, false)
 
-        return RecyclerViewHolder(binding)
+        return RecyclerViewHolder(binding, homeViewModel, lifecycleOwner)
     }
 
+    @ExperimentalCoroutinesApi
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
         val text = textList[position]
 

@@ -6,11 +6,13 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import jp.co.cyberagent.dojo2020.data.CategoryRepository
 import jp.co.cyberagent.dojo2020.data.DraftRepository
+import jp.co.cyberagent.dojo2020.data.FlowTimer
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
 import jp.co.cyberagent.dojo2020.data.ext.accessWithUid
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Draft
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -35,9 +37,7 @@ class MemoCreateViewModel @ViewModelInject constructor(
     }.asLiveData()
 
     fun addDraft(title: String, content: String, category: String) = viewModelScope.launch {
-        val id = UUID.randomUUID().toString()
-        val startTime = System.currentTimeMillis()
-        val draft = Draft(id, title, content, startTime, Category(category))
+        val draft = Draft.createDraft(title, content, Category(category))
 
         draftRepository.saveDraft(draft)
     }
