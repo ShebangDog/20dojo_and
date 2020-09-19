@@ -98,11 +98,11 @@ class TextAdapter(
             )
 
             val timeLiveData = homeViewModel.timeLiveData(draft.id, currentSeconds)
+
             timeLiveData.removeObservers(lifecycleOwner)
             timeLiveData.observe(lifecycleOwner) {
                 timeTextView.text = millsToFormattedTime(it)
             }
-            Log.d(TAG, timeLiveData.hashCode().toString())
 
             timerImageButton.setOnClickListener { view ->
                 view.isSelected = !view.isSelected
