@@ -10,6 +10,7 @@ import jp.co.cyberagent.dojo2020.data.DraftRepository
 import jp.co.cyberagent.dojo2020.data.FlowTimer
 import jp.co.cyberagent.dojo2020.data.MemoRepository
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
+import jp.co.cyberagent.dojo2020.data.model.Draft
 import jp.co.cyberagent.dojo2020.data.model.Memo
 import jp.co.cyberagent.dojo2020.data.model.toText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,5 +58,9 @@ class HomeViewModel @ViewModelInject constructor(
             memoRepository.saveMemo(userInfo?.uid, memo)
             Log.d(TAG, "uid is ${userInfo?.uid}")
         }
+    }
+
+    fun deleteDraft(draft: Draft) = viewModelScope.launch {
+        draftRepository.deleteDraftById(draft.id)
     }
 }

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.annotation.DrawableRes
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import jp.co.cyberagent.dojo2020.R
@@ -34,6 +35,18 @@ class TextAdapter(
         private val lifecycleOwner: LifecycleOwner
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        @DrawableRes
+        private val isStartingIcon = R.drawable.ic_starting_timer
+
+        @DrawableRes
+        private val isStoppingIcon = R.drawable.ic_stopping_timer
+
+        @DrawableRes
+        private val expandLessIcon = R.drawable.ic_expand_less
+
+        @DrawableRes
+        private val expandMoreIcon = R.drawable.ic_expand_more
+
         fun setOnItemClickListener(onItemClickListener: View.OnClickListener) {
             itemView.setOnClickListener(onItemClickListener)
         }
@@ -53,8 +66,8 @@ class TextAdapter(
                     }
 
                     expandImageButton.showImage(
-                        binding,
-                        if (it.isSelected) R.drawable.ic_expand_less else R.drawable.ic_expand_more
+                        this,
+                        if (it.isSelected) expandLessIcon else expandMoreIcon
                     )
                 }
 
@@ -73,7 +86,7 @@ class TextAdapter(
         }
 
         private fun setMemo(memo: Memo) = binding.apply {
-
+            timeTextView.text = millsToFormattedTime(memo.time)
         }
 
         @ExperimentalCoroutinesApi
@@ -82,26 +95,23 @@ class TextAdapter(
                 System.currentTimeMillis() - draft.startTime
             )
 
-            homeViewModel.timeLiveData(currentSeconds).observe(lifecycleOwner) { rawSeconds ->
-                val hour = TimeUnit.SECONDS.toHours(rawSeconds)
+            val timeLiveData = homeViewModel.timeLiveData(currentSeconds)
+            timeLiveData.observe(lifecycleOwner) { timeTextView.text = millsToFormattedTime(it) }
 
-                val minutes =
-                    TimeUnit.SECONDS.toMinutes(rawSeconds - TimeUnit.HOURS.toSeconds(hour))
+            timerImageButton.setOnClickListener { view ->
+                view.isSelected = !view.isSelected
 
-                val seconds =
-                    rawSeconds - TimeUnit.HOURS.toSeconds(hour) - TimeUnit.MINUTES.toSeconds(minutes)
+                timeLiveData.value?.also {
+                    homeViewModel.saveMemo(draft.toMemo(it))
+                    homeViewModel.deleteDraft(draft)
+                }
 
-                val timeAsText = listOf(hour, minutes, seconds)
-                    .map { it.toString() }
-                    .joinToString(":") { if (it.length == 1) "0$it" else it }
+                (view as ImageButton).showImage(
+                    this,
+                    if (view.isSelected) isStartingIcon else isStoppingIcon
+                )
 
-                timeTextView.text = timeAsText
-            }
-
-            timerImageButton.setOnClickListener {
-                it.isSelected = !it.isSelected
-
-                (it as ImageButton).showImage(this, R.drawable.ic_starting_timer)
+                timeLiveData.removeObservers(lifecycleOwner)
             }
         }
 
@@ -109,6 +119,17 @@ class TextAdapter(
 
         private fun String.toOneLine(): String =
             if (this.contains("\n")) takeWhile { it != '\n' } + stringTerminated else this
+
+        private fun millsToFormattedTime(totalTime: Long): String {
+            val hours = TimeUnit.SECONDS.toHours(totalTime)
+            val minutes = TimeUnit.SECONDS.toMinutes(totalTime - TimeUnit.HOURS.toSeconds(hours))
+            val seconds =
+                totalTime - TimeUnit.HOURS.toSeconds(hours) - TimeUnit.MINUTES.toSeconds(minutes)
+
+            return listOf(hours, minutes, seconds)
+                .map { it.toString() }
+                .joinToString(":") { if (it.length == 1) "0$it" else it }
+        }
 
         companion object {
             private const val stringTerminated = "..."

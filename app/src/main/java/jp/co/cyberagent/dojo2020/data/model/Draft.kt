@@ -9,6 +9,9 @@ data class Draft(
     val startTime: Long,
     val category: Category
 ) {
+
+    fun toMemo(totalTime: Long) = Memo(id, title, content, totalTime, category)
+
     companion object {
         fun createDraft(title: String, content: String, category: Category): Draft {
             val id = UUID.randomUUID().toString()

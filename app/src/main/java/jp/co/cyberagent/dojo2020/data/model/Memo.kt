@@ -12,7 +12,7 @@ data class Memo(
     val category: Category
 ) {
     companion object {
-        fun createWithOutId(title: String, contents: String, time: Long, category: Category): Memo {
+        fun createMemo(title: String, contents: String, time: Long, category: Category): Memo {
             val id = UUID.randomUUID().toString()
 
             return Memo(id, title, contents, time, category)

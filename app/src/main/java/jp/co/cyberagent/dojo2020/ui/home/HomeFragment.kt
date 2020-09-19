@@ -67,7 +67,7 @@ class HomeFragment : Fragment() {
 
                 filterListImageButton.setOnClickListener {
                     homeViewModel.saveMemo(
-                        Memo.createWithOutId(
+                        Memo.createMemo(
                             "Title" + Random.nextInt(30),
                             "contents",
                             0,
