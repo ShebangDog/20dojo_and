@@ -1,5 +1,7 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -95,15 +97,21 @@ class TextAdapter(
                 System.currentTimeMillis() - draft.startTime
             )
 
-            val timeLiveData = homeViewModel.timeLiveData(currentSeconds)
-            timeLiveData.observe(lifecycleOwner) { timeTextView.text = millsToFormattedTime(it) }
+            val timeLiveData = homeViewModel.timeLiveData(draft.id, currentSeconds)
+            timeLiveData.removeObservers(lifecycleOwner)
+            timeLiveData.observe(lifecycleOwner) {
+                timeTextView.text = millsToFormattedTime(it)
+            }
+            Log.d(TAG, timeLiveData.hashCode().toString())
 
             timerImageButton.setOnClickListener { view ->
                 view.isSelected = !view.isSelected
 
-                timeLiveData.value?.also {
-                    homeViewModel.saveMemo(draft.toMemo(it))
-                    homeViewModel.deleteDraft(draft)
+                if (view.isSelected) {
+                    timeLiveData.value?.also {
+                        homeViewModel.saveMemo(draft.toMemo(it))
+                        homeViewModel.deleteDraft(draft)
+                    }
                 }
 
                 (view as ImageButton).showImage(
