@@ -85,8 +85,10 @@ class TextAdapter(
             }
         }
 
+        @ExperimentalCoroutinesApi
         private fun setMemo(memo: Memo) = binding.apply {
             timeTextView.text = millsToFormattedTime(memo.time)
+            timerImageButton.showImage(this, isStoppingIcon)
         }
 
         @ExperimentalCoroutinesApi
@@ -95,21 +97,18 @@ class TextAdapter(
                 System.currentTimeMillis() - draft.startTime
             )
 
-            val timeLiveData = homeViewModel.timeLiveData(currentSeconds)
+            timerImageButton.showImage(this, isStartingIcon)
+
+            val timeLiveData = homeViewModel.timeLiveData(draft.id, currentSeconds)
+
+            timeLiveData.removeObservers(lifecycleOwner)
             timeLiveData.observe(lifecycleOwner) { timeTextView.text = millsToFormattedTime(it) }
 
-            timerImageButton.setOnClickListener { view ->
-                view.isSelected = !view.isSelected
-
+            timerImageButton.setOnClickListener {
                 timeLiveData.value?.also {
                     homeViewModel.saveMemo(draft.toMemo(it))
                     homeViewModel.deleteDraft(draft)
                 }
-
-                (view as ImageButton).showImage(
-                    this,
-                    if (view.isSelected) isStartingIcon else isStoppingIcon
-                )
 
                 timeLiveData.removeObservers(lifecycleOwner)
             }
