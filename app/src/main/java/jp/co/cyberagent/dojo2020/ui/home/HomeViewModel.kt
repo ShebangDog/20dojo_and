@@ -37,8 +37,8 @@ class HomeViewModel @ViewModelInject constructor(
         draftRepository.fetchAllDraft()
             .combine(memoRepository.fetchAllMemo(uid)) { draftList, memoList ->
 
-                val rightList = memoList.map { it.toText() }
-                val leftList = draftList.map { it.toText() }
+                val leftList = draftList.map { it.toText() }.sortedBy { it.category }
+                val rightList = memoList.map { it.toText() }.sortedBy { it.category }
 
                 leftList + rightList
             }
