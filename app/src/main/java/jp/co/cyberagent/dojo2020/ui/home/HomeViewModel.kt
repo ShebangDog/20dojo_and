@@ -13,9 +13,7 @@ import jp.co.cyberagent.dojo2020.data.model.Draft
 import jp.co.cyberagent.dojo2020.data.model.Memo
 import jp.co.cyberagent.dojo2020.data.model.toText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class HomeViewModel @ViewModelInject constructor(
@@ -28,7 +26,7 @@ class HomeViewModel @ViewModelInject constructor(
     val userLiveData = userFlow.asLiveData()
 
     @ExperimentalCoroutinesApi
-    fun timeLiveData(id: String, startTime: Long) = FlowTimer.instance(id).map { it + startTime }
+    fun timeLiveData(id: String, startTime: Long) = FlowTimer().timeFlow.asLiveData().map { it + startTime }
 
     @ExperimentalCoroutinesApi
     val textListLiveData = userFlow.flatMapLatest { userInfo ->
@@ -40,7 +38,7 @@ class HomeViewModel @ViewModelInject constructor(
                 val leftList = draftList.map { it.toText() }.sortedBy { it.category }
                 val rightList = memoList.map { it.toText() }.sortedBy { it.category }
 
-                leftList + rightList
+                (leftList + rightList).distinctBy { it.id }
             }
     }.asLiveData()
 
@@ -52,11 +50,20 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
+    fun saveDraft(draft: Draft) = viewModelScope.launch {
+        draftRepository.saveDraft(draft)
+    }
+
     fun saveMemo(memo: Memo) = viewModelScope.launch {
-        userFlow.collect { userInfo -> memoRepository.saveMemo(userInfo?.uid, memo) }
+        val savedMemo = memoRepository.fetchMemoById(userFlow.first()?.uid, memo.id).first()
+
+        memoRepository.saveMemo(userFlow.first()?.uid, addTimeToMemo(memo, savedMemo?.time ?: 0L))
     }
 
     fun deleteDraft(draft: Draft) = viewModelScope.launch {
         draftRepository.deleteDraftById(draft.id)
     }
+
+    private fun addTimeToMemo(memo: Memo, time: Long) = memo
+        .let { Memo(it.id, it.title, it.contents, time + it.time, it.category) }
 }

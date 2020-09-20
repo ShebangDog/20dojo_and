@@ -7,7 +7,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
-class FlowTimer private constructor() {
+class FlowTimer constructor() {
     private var isStarting = true
     private var differenceTime = 0L
 

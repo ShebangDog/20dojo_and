@@ -1,11 +1,14 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import androidx.annotation.DrawableRes
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Draft
@@ -33,7 +36,25 @@ class TextAdapter(
         private val binding: ItemMemoBinding,
         private val homeViewModel: HomeViewModel,
         private val lifecycleOwner: LifecycleOwner
-    ) : RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) , LifecycleOwner {
+
+        private val lifecycleRegistry = LifecycleRegistry(this)
+
+        init {
+            lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
+        }
+
+        fun onAppear() {
+            lifecycleRegistry.currentState = Lifecycle.State.CREATED
+        }
+
+        fun onDisappear() {
+            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+        }
+
+        override fun getLifecycle(): Lifecycle {
+            return lifecycleRegistry
+        }
 
         @DrawableRes
         private val isStartingIcon = R.drawable.ic_starting_timer
@@ -89,6 +110,10 @@ class TextAdapter(
         private fun setMemo(memo: Memo) = binding.apply {
             timeTextView.text = millsToFormattedTime(memo.time)
             timerImageButton.showImage(this, isStoppingIcon)
+
+            timerImageButton.setOnClickListener {
+                homeViewModel.saveDraft(memo.toDraft())
+            }
         }
 
         @ExperimentalCoroutinesApi
@@ -97,12 +122,16 @@ class TextAdapter(
                 System.currentTimeMillis() - draft.startTime
             )
 
+            Log.d(TAG, "currentSecond is $currentSeconds")
             timerImageButton.showImage(this, isStartingIcon)
 
             val timeLiveData = homeViewModel.timeLiveData(draft.id, currentSeconds)
 
             timeLiveData.removeObservers(lifecycleOwner)
-            timeLiveData.observe(lifecycleOwner) { timeTextView.text = millsToFormattedTime(it) }
+            timeLiveData.observe(lifecycleOwner) {
+                timeTextView.text = "$it"
+                Log.d(TAG, "currentSecond is $currentSeconds [${timeLiveData.hashCode()}]")
+            }
 
             timerImageButton.setOnClickListener {
                 timeLiveData.value?.also {
@@ -153,4 +182,14 @@ class TextAdapter(
     }
 
     override fun getItemCount() = textList.size
+
+    override fun onViewAttachedToWindow(holder: RecyclerViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holder.onAppear()
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.onDisappear()
+    }
 }
