@@ -1,7 +1,5 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,8 +85,10 @@ class TextAdapter(
             }
         }
 
+        @ExperimentalCoroutinesApi
         private fun setMemo(memo: Memo) = binding.apply {
             timeTextView.text = millsToFormattedTime(memo.time)
+            timerImageButton.showImage(this, isStoppingIcon)
         }
 
         @ExperimentalCoroutinesApi
@@ -97,27 +97,18 @@ class TextAdapter(
                 System.currentTimeMillis() - draft.startTime
             )
 
+            timerImageButton.showImage(this, isStartingIcon)
+
             val timeLiveData = homeViewModel.timeLiveData(draft.id, currentSeconds)
 
             timeLiveData.removeObservers(lifecycleOwner)
-            timeLiveData.observe(lifecycleOwner) {
-                timeTextView.text = millsToFormattedTime(it)
-            }
+            timeLiveData.observe(lifecycleOwner) { timeTextView.text = millsToFormattedTime(it) }
 
-            timerImageButton.setOnClickListener { view ->
-                view.isSelected = !view.isSelected
-
-                if (view.isSelected) {
-                    timeLiveData.value?.also {
-                        homeViewModel.saveMemo(draft.toMemo(it))
-                        homeViewModel.deleteDraft(draft)
-                    }
+            timerImageButton.setOnClickListener {
+                timeLiveData.value?.also {
+                    homeViewModel.saveMemo(draft.toMemo(it))
+                    homeViewModel.deleteDraft(draft)
                 }
-
-                (view as ImageButton).showImage(
-                    this,
-                    if (view.isSelected) isStartingIcon else isStoppingIcon
-                )
 
                 timeLiveData.removeObservers(lifecycleOwner)
             }
