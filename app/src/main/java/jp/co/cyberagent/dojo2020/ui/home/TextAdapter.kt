@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Draft
@@ -16,8 +15,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.Collections.emptyList
 import java.util.concurrent.TimeUnit
 
-typealias OnAppearListener = (ItemMemoBinding, Text) -> LiveData<Long>?
-typealias OnTimerClickListener = (text: Text, time: LiveData<Long>?) -> Unit
+typealias OnAppearListener = (ItemMemoBinding, Text) -> Unit
+typealias OnTimerClickListener = (text: Text) -> Unit
 
 class TextAdapter(
     private val listeners: Listeners
@@ -82,9 +81,9 @@ class TextAdapter(
                     }
                 }
 
-                val timeLiveData = onAppearListener(binding, text)
+                onAppearListener(binding, text)
 
-                timerImageButton.setOnClickListener { onTimerClickListener(text, timeLiveData) }
+                timerImageButton.setOnClickListener { onTimerClickListener(text) }
             }
 
             when (text) {

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewbinding.ViewBinding
@@ -28,6 +29,7 @@ import kotlin.random.Random
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val homeViewModel by viewModels<HomeViewModel>()
+    private val hashMap = hashMapOf<String, LiveData<Long>>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -147,7 +149,10 @@ class HomeFragment : Fragment() {
                             System.currentTimeMillis() - draft.startTime
                         )
 
-                        homeViewModel.timeLiveData(currentSeconds).apply {
+                        hashMap[draft.id]?.removeObservers(viewLifecycleOwner)
+
+                        with(homeViewModel.timeLiveData(currentSeconds)) {
+                            hashMap[draft.id] = this
                             observe(viewLifecycleOwner) {
                                 binding.timeTextView.text = millsToFormattedTime(it)
                             }
@@ -156,8 +161,6 @@ class HomeFragment : Fragment() {
 
                     is Text.Right -> {
                         val memo = text.value
-
-                        null
                     }
                 }
             }
@@ -170,17 +173,17 @@ class HomeFragment : Fragment() {
             }
 
         override val onTimerClickListener: OnTimerClickListener
-            get() = { text, timeLiveData ->
+            get() = { text ->
                 when (text) {
                     is Text.Left -> {
                         val draft = text.value
 
-                        timeLiveData?.removeObservers(viewLifecycleOwner)
-                        timeLiveData?.value?.also {
+                        val liveData = hashMap[draft.id]
+                        liveData?.removeObservers(viewLifecycleOwner)
+                        liveData?.value?.also {
                             homeViewModel.saveMemo(draft.toMemo(it))
                             homeViewModel.deleteDraft(draft)
                         }
-
                     }
 
                     is Text.Right -> {
