@@ -64,10 +64,10 @@
                 android:id="@+id/timer_image_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/small_margin"
-                android:layout_marginTop="@dimen/middle_margin"
-                android:layout_marginEnd="@dimen/large_margin"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="12dp"
                 android:background="@drawable/ripple_filter_list_button"
+                android:padding="12dp"
                 android:src="@drawable/ic_stopping_timer"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

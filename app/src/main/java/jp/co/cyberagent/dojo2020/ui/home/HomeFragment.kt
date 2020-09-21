@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewbinding.ViewBinding
@@ -18,14 +19,17 @@ import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Memo
+import jp.co.cyberagent.dojo2020.data.model.Text
 import jp.co.cyberagent.dojo2020.databinding.FragmentHomeBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val homeViewModel by viewModels<HomeViewModel>()
+    private val hashMap = hashMapOf<String, LiveData<Long>>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,10 +51,7 @@ class HomeFragment : Fragment() {
             false
         )
 
-        val memoAdapter = TextAdapter(homeViewModel, viewLifecycleOwner) {
-            val action = HomeFragmentDirections.actionHomeFragmentToMemoEditFragment("test_id")
-            findNavController().navigate(action)
-        }
+        val memoAdapter = TextAdapter(listeners())
 
         with(binding) {
             addFloatingActionButton.setOnClickListener { showMemoCreate() }
@@ -89,6 +90,14 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private var remove: () -> Unit = {}
+
+    override fun onStop() {
+        super.onStop()
+
+        remove()
+    }
+
     private fun showProfile() {
         findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
     }
@@ -118,4 +127,72 @@ class HomeFragment : Fragment() {
             })
     }
 
+    @ExperimentalCoroutinesApi
+    private fun listeners(): TextAdapter.Listeners = object : TextAdapter.Listeners {
+        private fun millsToFormattedTime(totalTime: Long): String {
+            val hours = TimeUnit.SECONDS.toHours(totalTime)
+            val minutes = TimeUnit.SECONDS.toMinutes(totalTime - TimeUnit.HOURS.toSeconds(hours))
+            val seconds =
+                totalTime - TimeUnit.HOURS.toSeconds(hours) - TimeUnit.MINUTES.toSeconds(minutes)
+
+            return listOf(hours, minutes, seconds)
+                .map { it.toString() }
+                .joinToString(":") { if (it.length == 1) "0$it" else it }
+        }
+
+        override val onAppearListener: OnAppearListener
+            get() = { binding, text ->
+                when (text) {
+                    is Text.Left -> {
+                        val draft = text.value
+                        val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
+                            System.currentTimeMillis() - draft.startTime
+                        )
+
+                        hashMap[draft.id]?.removeObservers(viewLifecycleOwner)
+
+                        with(homeViewModel.timeLiveData(currentSeconds)) {
+                            hashMap[draft.id] = this
+                            observe(viewLifecycleOwner) {
+                                binding.timeTextView.text = millsToFormattedTime(it)
+                            }
+                        }
+                    }
+
+                    is Text.Right -> {
+                        val memo = text.value
+                    }
+                }
+            }
+
+        override val onItemClickListener: View.OnClickListener
+            get() = View.OnClickListener {
+                val action =
+                    HomeFragmentDirections.actionHomeFragmentToMemoEditFragment("test_id")
+                findNavController().navigate(action)
+            }
+
+        override val onTimerClickListener: OnTimerClickListener
+            get() = { text ->
+                when (text) {
+                    is Text.Left -> {
+                        val draft = text.value
+
+                        val liveData = hashMap[draft.id]
+                        liveData?.removeObservers(viewLifecycleOwner)
+                        liveData?.value?.also {
+                            homeViewModel.saveMemo(draft.toMemo(it))
+                            homeViewModel.deleteDraft(draft)
+                        }
+                    }
+
+                    is Text.Right -> {
+                        val memo = text.value
+
+                        homeViewModel.saveDraft(memo.toDraft())
+                    }
+                }
+            }
+
+    }
 }

@@ -1,35 +1,31 @@
 package jp.co.cyberagent.dojo2020.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
-import jp.co.cyberagent.dojo2020.data.timer.TimerDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import java.util.*
 
-class FlowTimer private constructor() {
-    private var isStarting = true
-    private var differenceTime = 0L
-
-    fun stop() {
-        isStarting = false
-    }
-
-    fun start() {
-        isStarting = true
-    }
-
+object FlowTimer {
     @ExperimentalCoroutinesApi
-    val timeFlow = TimerDataSource.timerFlow
-        .onEach { if (!isStarting) differenceTime++ }
-        .map { it - differenceTime }
+    val timeFlow = callbackFlow<Long> {
+        val timer = Timer()
+        var time = 0L
 
-    companion object {
-        private val hashInstance = hashMapOf<String, LiveData<Long>>()
+        timer.scheduleAtFixedRate(
+            object : TimerTask() {
+                override fun run() {
+                    try {
+                        offer(time)
+                    } catch (exception: Exception) {
+                    }
 
-        @ExperimentalCoroutinesApi
-        fun instance(id: String) = hashInstance.getOrElse(id) {
-            FlowTimer().timeFlow.asLiveData().also { hashInstance[id] = it }
-        }
+                    time++
+                }
+            },
+            0,
+            1000L
+        )
+
+        awaitClose { timer.cancel() }
     }
 }

@@ -23,6 +23,9 @@ data class Memo(
     val time: Long,
     val category: Category
 ) {
+
+    fun toDraft(): Draft = Draft(id, title, contents, System.currentTimeMillis(), category)
+
     companion object {
         fun createMemo(title: String, contents: String, time: Long, category: Category): Memo {
             val id = UUID.randomUUID().toString()
