@@ -26,7 +26,7 @@ class HomeViewModel @ViewModelInject constructor(
     val userLiveData = userFlow.asLiveData()
 
     @ExperimentalCoroutinesApi
-    fun timeLiveData(id: String, startTime: Long) = FlowTimer().timeFlow.asLiveData().map { it + startTime }
+    fun timeLiveData(startTime: Long) = FlowTimer.timeFlow.map { it + startTime }.asLiveData()
 
     @ExperimentalCoroutinesApi
     val textListLiveData = userFlow.flatMapLatest { userInfo ->

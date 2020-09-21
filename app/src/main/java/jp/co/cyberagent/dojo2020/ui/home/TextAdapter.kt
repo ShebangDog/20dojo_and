@@ -1,14 +1,10 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Draft
@@ -20,11 +16,18 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.Collections.emptyList
 import java.util.concurrent.TimeUnit
 
+typealias OnAppearListener = (ItemMemoBinding, Text) -> LiveData<Long>?
+typealias OnTimerClickListener = (text: Text, time: LiveData<Long>?) -> Unit
+
 class TextAdapter(
-    private val homeViewModel: HomeViewModel,
-    private val lifecycleOwner: LifecycleOwner,
-    private val onItemClickListener: View.OnClickListener
+    private val listeners: Listeners
 ) : RecyclerView.Adapter<TextAdapter.RecyclerViewHolder>() {
+
+    interface Listeners {
+        val onAppearListener: OnAppearListener
+        val onItemClickListener: View.OnClickListener
+        val onTimerClickListener: OnTimerClickListener
+    }
 
     var textList: List<Text> = emptyList()
         set(value) {
@@ -33,28 +36,8 @@ class TextAdapter(
         }
 
     class RecyclerViewHolder(
-        private val binding: ItemMemoBinding,
-        private val homeViewModel: HomeViewModel,
-        private val lifecycleOwner: LifecycleOwner
-    ) : RecyclerView.ViewHolder(binding.root) , LifecycleOwner {
-
-        private val lifecycleRegistry = LifecycleRegistry(this)
-
-        init {
-            lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-        }
-
-        fun onAppear() {
-            lifecycleRegistry.currentState = Lifecycle.State.CREATED
-        }
-
-        fun onDisappear() {
-            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-        }
-
-        override fun getLifecycle(): Lifecycle {
-            return lifecycleRegistry
-        }
+        private val binding: ItemMemoBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         @DrawableRes
         private val isStartingIcon = R.drawable.ic_starting_timer
@@ -68,12 +51,12 @@ class TextAdapter(
         @DrawableRes
         private val expandMoreIcon = R.drawable.ic_expand_more
 
-        fun setOnItemClickListener(onItemClickListener: View.OnClickListener) {
-            itemView.setOnClickListener(onItemClickListener)
-        }
-
         @ExperimentalCoroutinesApi
-        fun setText(text: Text) {
+        fun setText(
+            text: Text,
+            onAppearListener: OnAppearListener,
+            onTimerClickListener: OnTimerClickListener
+        ) {
             binding.apply {
                 titleTextView.text = text.title
                 categoryTextView.text = text.category.name
@@ -98,6 +81,10 @@ class TextAdapter(
                             visibleOrGone(it.takeLastWhile { ch -> ch == addedPostFix }.length >= 3)
                     }
                 }
+
+                val timeLiveData = onAppearListener(binding, text)
+
+                timerImageButton.setOnClickListener { onTimerClickListener(text, timeLiveData) }
             }
 
             when (text) {
@@ -110,10 +97,6 @@ class TextAdapter(
         private fun setMemo(memo: Memo) = binding.apply {
             timeTextView.text = millsToFormattedTime(memo.time)
             timerImageButton.showImage(this, isStoppingIcon)
-
-            timerImageButton.setOnClickListener {
-                homeViewModel.saveDraft(memo.toDraft())
-            }
         }
 
         @ExperimentalCoroutinesApi
@@ -122,25 +105,7 @@ class TextAdapter(
                 System.currentTimeMillis() - draft.startTime
             )
 
-            Log.d(TAG, "currentSecond is $currentSeconds")
             timerImageButton.showImage(this, isStartingIcon)
-
-            val timeLiveData = homeViewModel.timeLiveData(draft.id, currentSeconds)
-
-            timeLiveData.removeObservers(lifecycleOwner)
-            timeLiveData.observe(lifecycleOwner) {
-                timeTextView.text = "$it"
-                Log.d(TAG, "currentSecond is $currentSeconds [${timeLiveData.hashCode()}]")
-            }
-
-            timerImageButton.setOnClickListener {
-                timeLiveData.value?.also {
-                    homeViewModel.saveMemo(draft.toMemo(it))
-                    homeViewModel.deleteDraft(draft)
-                }
-
-                timeLiveData.removeObservers(lifecycleOwner)
-            }
         }
 
         private fun visibleOrGone(isVisible: Boolean) = if (isVisible) View.VISIBLE else View.GONE
@@ -170,26 +135,17 @@ class TextAdapter(
         val inflater = LayoutInflater.from(parent.context)
         val binding: ItemMemoBinding = ItemMemoBinding.inflate(inflater, parent, false)
 
-        return RecyclerViewHolder(binding, homeViewModel, lifecycleOwner)
+        return RecyclerViewHolder(binding)
     }
 
     @ExperimentalCoroutinesApi
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
         val text = textList[position]
 
-        holder.setText(text)
-        holder.setOnItemClickListener(onItemClickListener)
+        holder.setText(text, listeners.onAppearListener, listeners.onTimerClickListener)
+        holder.itemView.setOnClickListener(listeners.onItemClickListener)
     }
 
     override fun getItemCount() = textList.size
 
-    override fun onViewAttachedToWindow(holder: RecyclerViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.onAppear()
-    }
-
-    override fun onViewDetachedFromWindow(holder: RecyclerViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.onDisappear()
-    }
 }
