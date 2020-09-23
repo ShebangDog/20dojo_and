@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -45,14 +44,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val linearLayoutManager = LinearLayoutManager(
-            context,
-            LinearLayoutManager.VERTICAL,
-            false
-        )
-
-        val memoAdapter = TextAdapter(listeners())
-
         with(binding) {
             addFloatingActionButton.setOnClickListener { showMemoCreate() }
             profileToolBarLayout.apply {
@@ -78,24 +69,10 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            recyclerView.apply {
-                setHasFixedSize(true)
-                layoutManager = linearLayoutManager
-                adapter = memoAdapter
-            }
-
-            homeViewModel.textListLiveData.observe(viewLifecycleOwner) { textList ->
-                memoAdapter.submitList(textList)
-            }
+            val textAdapter = TextAdapter(listeners())
+            recyclerView.adapter = textAdapter
+            homeViewModel.textListLiveData.observe(viewLifecycleOwner) { textAdapter.submitList(it) }
         }
-    }
-
-    private var remove: () -> Unit = {}
-
-    override fun onStop() {
-        super.onStop()
-
-        remove()
     }
 
     private fun showProfile() {
