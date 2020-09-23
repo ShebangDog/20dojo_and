@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.Content
 import jp.co.cyberagent.dojo2020.data.model.Memo
 import java.util.*
 
@@ -16,7 +17,7 @@ data class MemoEntity(
     val title: String,
 
     @ColumnInfo(name = "contents")
-    val contents: String,
+    val contents: Content,
 
     @ColumnInfo(name = "time")
     val time: Long,
