@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Draft
@@ -12,7 +14,6 @@ import jp.co.cyberagent.dojo2020.data.model.Text
 import jp.co.cyberagent.dojo2020.databinding.ItemMemoBinding
 import jp.co.cyberagent.dojo2020.ui.ext.showImage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.util.Collections.emptyList
 import java.util.concurrent.TimeUnit
 
 typealias OnAppearListener = (ItemMemoBinding, Text) -> Unit
@@ -20,19 +21,13 @@ typealias OnTimerClickListener = (text: Text) -> Unit
 
 class TextAdapter(
     private val listeners: Listeners
-) : RecyclerView.Adapter<TextAdapter.RecyclerViewHolder>() {
+) : ListAdapter<Text, TextAdapter.RecyclerViewHolder>(TextDiffUtilItemCallback()) {
 
     interface Listeners {
         val onAppearListener: OnAppearListener
         val onItemClickListener: View.OnClickListener
         val onTimerClickListener: OnTimerClickListener
     }
-
-    var textList: List<Text> = emptyList()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
 
     class RecyclerViewHolder(
         private val binding: ItemMemoBinding
@@ -100,10 +95,6 @@ class TextAdapter(
 
         @ExperimentalCoroutinesApi
         private fun setDraft(draft: Draft) = binding.apply {
-            val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
-                System.currentTimeMillis() - draft.startTime
-            )
-
             timerImageButton.showImage(this, isStartingIcon)
         }
 
@@ -139,12 +130,15 @@ class TextAdapter(
 
     @ExperimentalCoroutinesApi
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        val text = textList[position]
+        val text = getItem(position)
 
         holder.setText(text, listeners.onAppearListener, listeners.onTimerClickListener)
         holder.itemView.setOnClickListener(listeners.onItemClickListener)
     }
 
-    override fun getItemCount() = textList.size
+    class TextDiffUtilItemCallback : DiffUtil.ItemCallback<Text>() {
+        override fun areItemsTheSame(oldItem: Text, newItem: Text) = oldItem.id == newItem.id
 
+        override fun areContentsTheSame(oldItem: Text, newItem: Text) = oldItem == newItem
+    }
 }

@@ -85,7 +85,7 @@ class HomeFragment : Fragment() {
             }
 
             homeViewModel.textListLiveData.observe(viewLifecycleOwner) { textList ->
-                memoAdapter.textList = textList
+                memoAdapter.submitList(textList)
             }
         }
     }
