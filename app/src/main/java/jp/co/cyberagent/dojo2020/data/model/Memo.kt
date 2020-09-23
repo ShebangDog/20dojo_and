@@ -11,6 +11,15 @@ data class Category(val name: String) : Comparable<Category> {
         return this.name.compareTo(other.name)
     }
 
+    override fun equals(other: Any?): Boolean = when (other) {
+        is Category -> this.name == other.name
+        else -> false
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+
     companion object {
         const val defaultCategory = "None"
     }
