@@ -1,9 +1,9 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import jp.co.cyberagent.dojo2020.data.DraftRepository
 import jp.co.cyberagent.dojo2020.data.FlowTimer
@@ -22,11 +22,16 @@ class HomeViewModel @ViewModelInject constructor(
     firebaseUserInfoRepository: UserInfoRepository
 ) : ViewModel() {
 
+    private val hashMap = hashMapOf<String, LiveData<Long>>()
+
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
     val userLiveData = userFlow.asLiveData()
 
     @ExperimentalCoroutinesApi
-    fun timeLiveData(startTime: Long) = FlowTimer.timeFlow.map { it + startTime }.asLiveData()
+    fun timeLiveData(id: String, startTime: Long) =
+        FlowTimer.timeFlow.map { it + startTime }.asLiveData().also { hashMap[id] = it }
+
+    fun previousTimeLiveData(id: String) = hashMap[id]
 
     @ExperimentalCoroutinesApi
     val textListLiveData = userFlow.flatMapLatest { userInfo ->
