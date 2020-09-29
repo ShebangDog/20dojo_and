@@ -5,7 +5,7 @@ import java.util.*
 data class Draft(
     val id: String,
     val title: String,
-    val content: String,
+    val content: Content,
     val startTime: Long,
     val category: Category
 ) {
@@ -13,7 +13,7 @@ data class Draft(
     fun toMemo(totalTime: Long) = Memo(id, title, content, totalTime, category)
 
     companion object {
-        fun createDraft(title: String, content: String, category: Category): Draft {
+        fun createDraft(title: String, content: Content, category: Category): Draft {
             val id = UUID.randomUUID().toString()
             val startTime = System.currentTimeMillis()
 

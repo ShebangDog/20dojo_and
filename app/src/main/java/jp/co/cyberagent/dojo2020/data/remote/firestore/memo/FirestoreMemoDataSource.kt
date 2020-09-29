@@ -93,7 +93,7 @@ class DefaultFirestoreMemoDataSource @Inject constructor() : FirestoreMemoDataSo
     }
 
     private fun Memo.toEntity(): MemoEntity {
-        return MemoEntity(id, title, contents, time, category.name)
+        return MemoEntity(id, title, contents.text, time, category.name)
     }
 
 }

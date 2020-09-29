@@ -3,7 +3,7 @@ package jp.co.cyberagent.dojo2020.data.model
 sealed class Text(
     val id: String,
     val title: String,
-    val contents: String,
+    val content: Content,
     val category: Category
 ) {
     data class Left(val value: Draft) : Text(value.id, value.title, value.content, value.category)
@@ -12,7 +12,7 @@ sealed class Text(
     override fun hashCode(): Int {
         var result = id.hashCode()
         result = 31 * result + title.hashCode()
-        result = 31 * result + contents.hashCode()
+        result = 31 * result + content.hashCode()
         result = 31 * result + category.hashCode()
         return result
     }
@@ -25,7 +25,7 @@ sealed class Text(
 
         if (id != other.id) return false
         if (title != other.title) return false
-        if (contents != other.contents) return false
+        if (content != other.content) return false
         if (category != other.category) return false
 
         return true

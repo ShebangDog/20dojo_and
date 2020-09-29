@@ -1,9 +1,9 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import jp.co.cyberagent.dojo2020.data.DraftRepository
 import jp.co.cyberagent.dojo2020.data.FlowTimer
@@ -15,6 +15,7 @@ import jp.co.cyberagent.dojo2020.data.model.toText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class HomeViewModel @ViewModelInject constructor(
     private val draftRepository: DraftRepository,
@@ -26,7 +27,13 @@ class HomeViewModel @ViewModelInject constructor(
     val userLiveData = userFlow.asLiveData()
 
     @ExperimentalCoroutinesApi
-    fun timeLiveData(startTime: Long) = FlowTimer.timeFlow.map { it + startTime }.asLiveData()
+    fun timeLiveData(draft: Draft): LiveData<Long> {
+        val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
+            System.currentTimeMillis() - draft.startTime
+        )
+
+        return FlowTimer.timeFlow.map { it + currentSeconds }.asLiveData()
+    }
 
     @ExperimentalCoroutinesApi
     val textListLiveData = userFlow.flatMapLatest { userInfo ->

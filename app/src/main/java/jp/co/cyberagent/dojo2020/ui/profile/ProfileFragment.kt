@@ -50,7 +50,6 @@ class ProfileFragment : Fragment() {
             profileViewModel.firebaseUserInfoLiveData.observe(viewLifecycleOwner) { firebaseUserInfo ->
                 with(primaryAccountLayout) {
                     iconImageButton.showImage(
-                        this,
                         firebaseUserInfo?.imageUri
                     )
                 }
@@ -60,14 +59,14 @@ class ProfileFragment : Fragment() {
                 profile?.accountList?.forEach {
                     if (it.serviceName == "Twitter") {
                         secondaryTopAccountLayout.apply {
-                            iconImageButton.showImage(this, R.mipmap.twitter_logo)
+                            iconImageButton.showImage(R.mipmap.twitter_logo)
                             idTextView.text = it.id
                         }
                     }
 
                     if (it.serviceName == "GitHub") {
                         secondaryBottomAccountLayout.apply {
-                            iconImageButton.showImage(this, R.mipmap.github_logo)
+                            iconImageButton.showImage(R.mipmap.github_logo)
                             idTextView.text = it.id
                         }
                     }
@@ -76,7 +75,7 @@ class ProfileFragment : Fragment() {
             }
 
             profileViewModel.pieDataSetLiveData(
-                "Category",
+                "",
                 ColorTemplate.MATERIAL_COLORS,
                 ProfileViewModel.ValueView.Default
             ).observe(viewLifecycleOwner) { dataSet ->
