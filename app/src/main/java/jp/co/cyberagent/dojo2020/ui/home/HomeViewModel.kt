@@ -15,6 +15,7 @@ import jp.co.cyberagent.dojo2020.data.model.toText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class HomeViewModel @ViewModelInject constructor(
     private val draftRepository: DraftRepository,
@@ -22,16 +23,17 @@ class HomeViewModel @ViewModelInject constructor(
     firebaseUserInfoRepository: UserInfoRepository
 ) : ViewModel() {
 
-    private val hashMap = hashMapOf<String, LiveData<Long>>()
-
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
     val userLiveData = userFlow.asLiveData()
 
     @ExperimentalCoroutinesApi
-    fun timeLiveData(id: String, startTime: Long) =
-        FlowTimer.timeFlow.map { it + startTime }.asLiveData().also { hashMap[id] = it }
+    fun timeLiveData(draft: Draft): LiveData<Long> {
+        val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
+            System.currentTimeMillis() - draft.startTime
+        )
 
-    fun previousTimeLiveData(id: String) = hashMap[id]
+        return FlowTimer.timeFlow.map { it + currentSeconds }.asLiveData()
+    }
 
     @ExperimentalCoroutinesApi
     val textListLiveData = userFlow.flatMapLatest { userInfo ->

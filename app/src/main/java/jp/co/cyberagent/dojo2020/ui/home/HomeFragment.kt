@@ -111,14 +111,11 @@ class HomeFragment : Fragment() {
                 when (text) {
                     is Text.Left -> {
                         val draft = text.value
-                        val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
-                            System.currentTimeMillis() - draft.startTime
-                        )
 
                         with(homeViewModel) {
-                            previousTimeLiveData(draft.id)?.removeObservers(viewLifecycleOwner)
 
-                            binding.timeLiveData = timeLiveData(draft.id, currentSeconds)
+                            val liveData = timeLiveData(draft)
+                            binding.timeLiveData = liveData
                         }
                     }
 
@@ -144,13 +141,12 @@ class HomeFragment : Fragment() {
                         val draft = text.value
 
                         with(homeViewModel) {
-                            val previousLiveData = previousTimeLiveData(draft.id)
+                            val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
+                                System.currentTimeMillis() - draft.startTime
+                            )
 
-                            previousLiveData?.removeObservers(viewLifecycleOwner)
-                            previousLiveData?.value?.also {
-                                saveMemo(draft.toMemo(it))
-                                deleteDraft(draft)
-                            }
+                            saveMemo(draft.toMemo(currentSeconds))
+                            deleteDraft(draft)
                         }
                     }
 
