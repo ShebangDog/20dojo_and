@@ -42,6 +42,12 @@ class MemoCreateFragment : Fragment() {
         showKeyboard()
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        hideKeyboard()
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
@@ -98,10 +104,25 @@ class MemoCreateFragment : Fragment() {
     }
 
     private fun showKeyboard() {
-        val manager =
-            activityInFragment.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (binding.titleTextEdit.requestFocus()) {
 
-        manager.showSoftInput(binding.titleTextEdit, InputMethodManager.SHOW_IMPLICIT)
+            val manager =
+                activityInFragment.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+            manager.showSoftInput(binding.titleTextEdit, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    private fun hideKeyboard() {
+        if (activityInFragment.currentFocus != null) {
+            val inputMethodManager =
+                activityInFragment.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+            inputMethodManager.hideSoftInputFromWindow(
+                activityInFragment.currentFocus?.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
+        }
     }
 
     private fun showDialog() {
