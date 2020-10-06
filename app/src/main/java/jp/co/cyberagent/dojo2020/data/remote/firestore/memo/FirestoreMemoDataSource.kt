@@ -47,9 +47,8 @@ class DefaultFirestoreMemoDataSource @Inject constructor() : FirestoreMemoDataSo
             exception?.message?.run { return@addSnapshotListener } // if use state, emit error
 
             val memoEntityList = snapshot?.toObjects(MemoEntity::class.java)
-            memoEntityList ?: return@addSnapshotListener
 
-            val memoList = memoEntityList.mapNotNull { it.modelOrNull() }
+            val memoList = memoEntityList?.mapNotNull { it.modelOrNull() } ?: emptyList()
 
             offer(memoList)
         }.also { awaitClose { it.remove() } }
@@ -67,9 +66,8 @@ class DefaultFirestoreMemoDataSource @Inject constructor() : FirestoreMemoDataSo
                 exception?.message?.run { return@addSnapshotListener }
 
                 val memoEntityList = snapshot?.toObjects(MemoEntity::class.java)
-                memoEntityList ?: return@addSnapshotListener
 
-                val memoList = memoEntityList.mapNotNull { it.modelOrNull() }
+                val memoList = memoEntityList?.mapNotNull { it.modelOrNull() }
 
                 offer(memoList)
             }.also { awaitClose { it.remove() } }
@@ -81,9 +79,8 @@ class DefaultFirestoreMemoDataSource @Inject constructor() : FirestoreMemoDataSo
             exception?.message?.run { return@addSnapshotListener }
 
             val memoEntity = snapshot?.toObject(MemoEntity::class.java)
-            memoEntity ?: return@addSnapshotListener
 
-            offer(memoEntity.modelOrNull())
+            offer(memoEntity?.modelOrNull())
         }.also { awaitClose { it.remove() } }
 
     }
