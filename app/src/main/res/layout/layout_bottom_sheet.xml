@@ -100,9 +100,12 @@
                 style="@style/Widget.MaterialComponents.Button.Icon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-
                 android:layout_marginStart="2dp"
                 android:layout_marginTop="6dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
                 android:visibility="gone"
                 app:icon="@drawable/ic_add"
                 app:iconSize="24dp"

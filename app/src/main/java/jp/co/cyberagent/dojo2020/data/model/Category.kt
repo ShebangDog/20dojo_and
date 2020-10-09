@@ -1,5 +1,8 @@
 package jp.co.cyberagent.dojo2020.data.model
 
+import android.content.Context
+import jp.co.cyberagent.dojo2020.R
+
 data class Category(val name: String) : Comparable<Category> {
     override fun compareTo(other: Category): Int {
         if (this.name == other.name) return 0
@@ -20,5 +23,8 @@ data class Category(val name: String) : Comparable<Category> {
 
     companion object {
         const val defaultCategory = "None"
+
+        fun defaultCategoryList(context: Context) =
+            context.resources.getStringArray(R.array.category_list).toList()
     }
 }

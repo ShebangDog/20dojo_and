@@ -14,7 +14,6 @@ import jp.co.cyberagent.dojo2020.data.ProfileRepository
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.TimeEachCategory
-import jp.co.cyberagent.dojo2020.ui.create.spinner.SpinnerAdapter
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
@@ -50,9 +49,8 @@ class ProfileViewModel @ViewModelInject constructor(
 
         memoListFlow
             .combine(categoryRepository.fetchAllCategory(uid)) { memoList, ownCategoryList ->
-                val defaultCategoryList =
-                    SpinnerAdapter.defaultItemList(application)
-                        .map { Category(it) }
+                val defaultCategoryList = Category.defaultCategoryList(application)
+                    .map { Category(it) }
 
                 val categoryList = ownCategoryList + defaultCategoryList
 

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.databinding.LayoutBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -70,6 +71,8 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                 editText?.doOnTextChanged { text, _, _, _ ->
                     addCategoryButton.visibility =
                         if (text?.length == 0) View.GONE else View.VISIBLE
+
+                    addCategoryButton.setBackgroundColor(context.getColor(R.color.colorGray))
                 }
 
                 setEndIconOnClickListener {
