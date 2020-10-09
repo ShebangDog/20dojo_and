@@ -12,10 +12,15 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import jp.co.cyberagent.dojo2020.databinding.LayoutBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
-import kotlinx.android.synthetic.main.layout_bottom_sheet.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.random.Random
 
-class CustomBottomSheetDialog : BottomSheetDialogFragment() {
+interface OnClickChipListener {
+    fun onClick(categoryName: String)
+}
+
+class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListener) :
+    BottomSheetDialogFragment() {
     companion object {
         const val TAG = "CustomBottomSheetDialog"
     }
@@ -23,32 +28,47 @@ class CustomBottomSheetDialog : BottomSheetDialogFragment() {
     private lateinit var binding: LayoutBottomSheetBinding
     private val memoCreateViewModel by activityViewModels<MemoCreateViewModel>()
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = LayoutBottomSheetBinding.inflate(inflater)
+        binding = LayoutBottomSheetBinding.inflate(inflater).apply {
+            lifecycleOwner = viewLifecycleOwner
+
+            viewModel = memoCreateViewModel
+            onChipClickListener = object : OnClickChipListener {
+                override fun onClick(categoryName: String) {
+                    onClickChipListener.onClick(categoryName)
+                    dismiss()
+                }
+            }
+        }
 
         return binding.root
     }
 
+    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            val onClick: (View) -> Unit = {
-                val category = addCategoryTextField.editText?.text.toString()
 
-                memoCreateViewModel.addCategory(category)
+            val onClick: (View) -> Unit = {
+                val categoryName = addCategoryTextField.editText?.text.toString()
+
+                memoCreateViewModel.addCategory(categoryName)
+                onClickChipListener.onClick(categoryName)
+                dismiss()
             }
 
             addCategoryButton.setOnClickListener(onClick)
 
             with(addCategoryTextField) {
                 editText?.doOnTextChanged { text, _, _, _ ->
-                    add_category_button.visibility =
+                    addCategoryButton.visibility =
                         if (text?.length == 0) View.GONE else View.VISIBLE
                 }
 

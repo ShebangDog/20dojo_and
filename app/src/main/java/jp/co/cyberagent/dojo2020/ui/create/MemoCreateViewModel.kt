@@ -25,7 +25,7 @@ class MemoCreateViewModel @ViewModelInject constructor(
     private val userInfoFlow = userInfoRepository.fetchUserInfo()
 
     @ExperimentalCoroutinesApi
-    val categoryListLiveData = userInfoFlow.flatMapLatest { firebaseUserInfo ->
+    val categorySetLiveData = userInfoFlow.flatMapLatest { firebaseUserInfo ->
         val uid = firebaseUserInfo?.uid
 
         val categoryListFlow = categoryRepository.fetchAllCategory(uid)

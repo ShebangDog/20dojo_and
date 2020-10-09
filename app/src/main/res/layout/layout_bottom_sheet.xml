@@ -4,6 +4,14 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel" />
+
+        <variable
+            name="onChipClickListener"
+            type="jp.co.cyberagent.dojo2020.ui.widget.OnClickChipListener" />
+
     </data>
 
     <LinearLayout
@@ -12,40 +20,50 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="0dp"
-            android:text="Select Category"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:visibility="@{(viewModel.categorySetLiveData != null) ? !viewModel.categorySetLiveData.empty : false}">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
-            android:background="#aaa" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="0dp"
+                android:text="Select Category"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="8dp"
-            app:singleSelection="true">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:background="#aaa" />
 
-        </com.google.android.material.chip.ChipGroup>
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="8dp"
+                app:categories="@{viewModel.categorySetLiveData}"
+                app:onCategoryChipClick="@{onChipClickListener}"
+                app:singleSelection="true">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="8dp"
-            android:background="#aaa"
-            app:layout_constraintTop_toTopOf="parent" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="#aaa"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -85,10 +103,6 @@
 
                 android:layout_marginStart="2dp"
                 android:layout_marginTop="6dp"
-                android:insetLeft="0dp"
-                android:insetTop="0dp"
-                android:insetRight="0dp"
-                android:insetBottom="0dp"
                 android:visibility="gone"
                 app:icon="@drawable/ic_add"
                 app:iconSize="24dp"
