@@ -40,9 +40,8 @@ class DefaultFirestoreCategoryDataSource @Inject constructor() : FirestoreCatego
             exception?.message?.run { return@addSnapshotListener }
 
             val categoryEntityList = snapshot?.toObjects(CategoryEntity::class.java)
-            categoryEntityList ?: return@addSnapshotListener
 
-            val categoryList = categoryEntityList.mapNotNull { it.modelOrNull() }
+            val categoryList = categoryEntityList?.mapNotNull { it.modelOrNull() } ?: emptyList()
 
             offer(categoryList)
         }.also { awaitClose { it.remove() } }
