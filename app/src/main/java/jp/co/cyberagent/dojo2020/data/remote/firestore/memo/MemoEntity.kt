@@ -1,7 +1,7 @@
 package jp.co.cyberagent.dojo2020.data.remote.firestore.memo
 
-import android.graphics.Color
 import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.Color
 import jp.co.cyberagent.dojo2020.data.model.Content
 import jp.co.cyberagent.dojo2020.data.model.Memo
 

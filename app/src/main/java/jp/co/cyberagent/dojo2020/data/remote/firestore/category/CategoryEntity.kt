@@ -1,7 +1,7 @@
 package jp.co.cyberagent.dojo2020.data.remote.firestore.category
 
-import android.graphics.Color
 import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.Color
 
 data class CategoryEntity(
     val name: String? = null,

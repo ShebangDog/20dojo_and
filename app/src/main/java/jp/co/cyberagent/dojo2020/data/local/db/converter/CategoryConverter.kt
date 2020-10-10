@@ -1,13 +1,13 @@
 package jp.co.cyberagent.dojo2020.data.local.db.converter
 
-import android.graphics.Color
 import androidx.room.TypeConverter
 import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.Color
 
 class CategoryConverter {
     @TypeConverter
     fun fromCategory(category: Category): String? {
-        return listOf(category.name, category.color.toArgb()).joinToString(delimiter)
+        return listOf(category.name, category.color.value).joinToString(delimiter)
     }
 
     @TypeConverter
@@ -15,7 +15,7 @@ class CategoryConverter {
         val elemList = string.split(delimiter).toList()
 
         val name = elemList.first()
-        val color = Color.valueOf(elemList.drop(1).first().toIntOrNull() ?: Color.WHITE)
+        val color = Color.valueOf(elemList.drop(1).first().toIntOrNull())
 
         return Category(name, color)
     }

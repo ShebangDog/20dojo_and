@@ -1,25 +1,20 @@
 package jp.co.cyberagent.dojo2020.ui.widget
 
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.Color
 import jp.co.cyberagent.dojo2020.databinding.LayoutBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlin.random.Random
 
 interface OnClickChipListener {
     fun onClick(category: Category)
@@ -83,22 +78,16 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                 }
 
                 setEndIconOnClickListener {
-                    val color = pickColor().toArgb()
+                    val color = Color.pickColor()
 
-                    boxBackgroundColor = color
+                    boxBackgroundColor = color.value
                     editText?.background?.colorFilter = PorterDuffColorFilter(
-                        color,
+                        color.value,
                         PorterDuff.Mode.SRC_IN
                     )
                 }
             }
 
         }
-    }
-
-    private fun pickColor(): Color {
-        fun randomElem() = Random.nextInt(256).toFloat()
-
-        return Color.valueOf(randomElem(), randomElem(), randomElem())
     }
 }

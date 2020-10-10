@@ -1,8 +1,8 @@
 package jp.co.cyberagent.dojo2020.data.model
 
 import android.content.Context
-import android.graphics.Color
 import jp.co.cyberagent.dojo2020.R
+import kotlin.random.Random
 
 data class Category(val name: String, val color: Color) : Comparable<Category> {
 
@@ -32,7 +32,42 @@ data class Category(val name: String, val color: Color) : Comparable<Category> {
                 .map { Color.parseColor(it) }
 
             return (nameList zip colorList)
-                .map { (name, color) -> Category(name, Color.valueOf(color)) }
+                .map { (name, color) -> Category(name, color) }
+        }
+    }
+}
+
+class Color private constructor(internalColor: android.graphics.Color) {
+    val value = internalColor.toArgb()
+
+    companion object {
+        val defaultColor = valueOf(android.graphics.Color.WHITE)
+
+        fun valueOf(rgb: Int): Color {
+            return Color(android.graphics.Color.valueOf(rgb))
+        }
+
+        fun valueOf(rgb: Int?): Color {
+            return if (rgb == null) defaultColor else valueOf(rgb)
+        }
+
+        private fun valueOf(red: Int, green: Int, blue: Int): Color {
+            return Color(
+                android.graphics.Color.valueOf(
+                    red.toFloat(), green.toFloat(),
+                    blue.toFloat()
+                )
+            )
+        }
+
+        fun parseColor(colorCode: String): Color {
+            return valueOf(android.graphics.Color.parseColor(colorCode))
+        }
+
+        fun pickColor(): Color {
+            val randomElem = Random.nextInt(256)
+
+            return valueOf(randomElem, randomElem, randomElem)
         }
     }
 }

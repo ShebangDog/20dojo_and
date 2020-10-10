@@ -53,6 +53,6 @@ private fun createChip(
         setOnClickListener { onClickChip(category) }
 
         text = category.name
-        chipBackgroundColor = ColorStateList.valueOf(category.color.toArgb())
+        chipBackgroundColor = ColorStateList.valueOf(category.color.value)
     }
 }

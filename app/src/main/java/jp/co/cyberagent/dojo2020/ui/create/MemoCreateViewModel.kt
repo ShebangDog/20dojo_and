@@ -1,7 +1,6 @@
 package jp.co.cyberagent.dojo2020.ui.create
 
 import android.app.Application
-import android.graphics.Color
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
@@ -11,6 +10,7 @@ import jp.co.cyberagent.dojo2020.data.DraftRepository
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
 import jp.co.cyberagent.dojo2020.data.ext.accessWithUid
 import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.Color
 import jp.co.cyberagent.dojo2020.data.model.Content
 import jp.co.cyberagent.dojo2020.data.model.Draft
 import kotlinx.coroutines.ExperimentalCoroutinesApi
