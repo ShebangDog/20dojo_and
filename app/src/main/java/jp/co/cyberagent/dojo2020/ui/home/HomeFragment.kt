@@ -48,7 +48,7 @@ class HomeFragment : Fragment() {
                     homeViewModel.userLiveData.observe(viewLifecycleOwner) { userInfo ->
                         userInfo ?: return@observe
 
-                        getDrawable(binding, userInfo.imageUri) { navigationIcon = it }
+                        loadDrawable(binding, userInfo.imageUri) { navigationIcon = it }
                     }
                 }
 
@@ -71,7 +71,7 @@ class HomeFragment : Fragment() {
         findNavController().navigate(R.id.action_homeFragment_to_memoCreateFragment)
     }
 
-    private fun getDrawable(
+    private fun loadDrawable(
         viewBinding: ViewBinding,
         imageUri: Uri?,
         consumer: (Drawable) -> Unit
