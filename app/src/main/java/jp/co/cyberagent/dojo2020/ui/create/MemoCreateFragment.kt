@@ -80,7 +80,9 @@ class MemoCreateFragment : Fragment() {
                 val title = titleTextEdit.text.toString()
                 val content = contentTextEdit.text.toString()
                 val categoryName = categoryChip.text.toString()
-                val categoryColor = Color.valueOf(categoryChip.solidColor)
+                val categoryColor = Color.valueOf(
+                    categoryChip.chipBackgroundColor?.defaultColor ?: Color.WHITE
+                )
 
                 memoCreateViewModel.addDraft(title, content, categoryName, categoryColor)
 
