@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="category_color_list">
+        <item>#fa8c0a</item>
+        <item>#3DDB86</item>
+        <item>#7d847a</item>
+        <item>#8043c4</item>
+    </string-array>
+</resources>

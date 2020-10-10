@@ -1,6 +1,7 @@
 package jp.co.cyberagent.dojo2020.ui.create
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.widget.LinearLayout
 import androidx.databinding.BindingAdapter
 import com.google.android.material.chip.Chip
@@ -26,7 +27,9 @@ fun bindChips(
     chipGroup.removeAllViews()
     categorySet?.forEach { category ->
         chipGroup.addView(
-            createChip(chipGroup.context, category) { onClickChipListener.onClick(it) },
+            createChip(chipGroup.context, category) {
+                onClickChipListener.onClick(it)
+            },
             0
         )
     }
@@ -35,7 +38,7 @@ fun bindChips(
 private fun createChip(
     context: Context,
     category: Category,
-    onClickChip: (String) -> Unit
+    onClickChip: (Category) -> Unit
 ): Chip {
     val chip = Chip(context)
     val chipDrawable = ChipDrawable.createFromAttributes(
@@ -47,8 +50,9 @@ private fun createChip(
 
     return chip.apply {
         setChipDrawable(chipDrawable)
-        setOnClickListener { onClickChip(category.name) }
+        setOnClickListener { onClickChip(category) }
 
         text = category.name
+        chipBackgroundColor = ColorStateList.valueOf(category.color.toArgb())
     }
 }

@@ -14,6 +14,7 @@ import jp.co.cyberagent.dojo2020.data.local.db.category.CategoryDao
 import jp.co.cyberagent.dojo2020.data.local.db.category.CategoryEntity
 import jp.co.cyberagent.dojo2020.data.local.db.converter.AccountListConverter
 import jp.co.cyberagent.dojo2020.data.local.db.converter.CategoryConverter
+import jp.co.cyberagent.dojo2020.data.local.db.converter.ColorConverter
 import jp.co.cyberagent.dojo2020.data.local.db.converter.ContentConverter
 import jp.co.cyberagent.dojo2020.data.local.db.draft.DraftDao
 import jp.co.cyberagent.dojo2020.data.local.db.draft.DraftEntity
@@ -23,7 +24,12 @@ import jp.co.cyberagent.dojo2020.data.local.db.profile.ProfileDao
 import jp.co.cyberagent.dojo2020.data.local.db.profile.ProfileEntity
 import javax.inject.Singleton
 
-@TypeConverters(AccountListConverter::class, CategoryConverter::class, ContentConverter::class)
+@TypeConverters(
+    AccountListConverter::class,
+    CategoryConverter::class,
+    ContentConverter::class,
+    ColorConverter::class
+)
 @Database(
     entities = [MemoEntity::class, DraftEntity::class, ProfileEntity::class, CategoryEntity::class],
     version = 1

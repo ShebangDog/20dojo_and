@@ -15,14 +15,10 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
-import jp.co.cyberagent.dojo2020.data.model.Category
-import jp.co.cyberagent.dojo2020.data.model.Content
-import jp.co.cyberagent.dojo2020.data.model.Memo
 import jp.co.cyberagent.dojo2020.data.model.Text
 import jp.co.cyberagent.dojo2020.databinding.FragmentHomeBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -57,14 +53,7 @@ class HomeFragment : Fragment() {
                 }
 
                 filterListImageButton.setOnClickListener {
-                    homeViewModel.saveMemo(
-                        Memo.createMemo(
-                            "Title" + Random.nextInt(30),
-                            Content("contents"),
-                            0,
-                            Category("Kotlin")
-                        )
-                    )
+
                 }
             }
 

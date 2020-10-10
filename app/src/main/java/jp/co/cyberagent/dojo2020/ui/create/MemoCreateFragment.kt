@@ -1,6 +1,8 @@
 package jp.co.cyberagent.dojo2020.ui.create
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
+import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.databinding.FragmentMemoCreateBinding
 import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog
 import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog.Companion.TAG
@@ -62,8 +65,11 @@ class MemoCreateFragment : Fragment() {
         with(binding) {
             categoryChip.setOnClickListener {
                 val onClick = object : OnClickChipListener {
-                    override fun onClick(categoryName: String) {
-                        categoryChip.text = categoryName
+                    override fun onClick(category: Category) {
+                        categoryChip.text = category.name
+                        categoryChip.chipBackgroundColor = ColorStateList.valueOf(
+                            category.color.toArgb()
+                        )
                     }
                 }
 
@@ -73,9 +79,10 @@ class MemoCreateFragment : Fragment() {
             memoCreateToolBarLayout.addButton.setOnClickListener {
                 val title = titleTextEdit.text.toString()
                 val content = contentTextEdit.text.toString()
-                val category = categoryChip.text.toString()
+                val categoryName = categoryChip.text.toString()
+                val categoryColor = Color.valueOf(categoryChip.solidColor)
 
-                memoCreateViewModel.addDraft(title, content, category)
+                memoCreateViewModel.addDraft(title, content, categoryName, categoryColor)
 
                 showHome()
             }

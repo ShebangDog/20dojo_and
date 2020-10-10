@@ -50,7 +50,6 @@ class ProfileViewModel @ViewModelInject constructor(
         memoListFlow
             .combine(categoryRepository.fetchAllCategory(uid)) { memoList, ownCategoryList ->
                 val defaultCategoryList = Category.defaultCategoryList(application)
-                    .map { Category(it) }
 
                 val categoryList = ownCategoryList + defaultCategoryList
 

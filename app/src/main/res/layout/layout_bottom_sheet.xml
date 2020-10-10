@@ -66,6 +66,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/text_field_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorDarkWhite"
@@ -73,7 +74,7 @@
             android:paddingHorizontal="16dp">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/add_category_text_field"
+                android:id="@+id/add_category_text_field_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -85,6 +86,7 @@
                 app:endIconMode="custom">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_category_text_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_rounded_edit_text"

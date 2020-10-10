@@ -1,7 +1,9 @@
 package jp.co.cyberagent.dojo2020.ui.create
 
+import android.app.Application
+import android.graphics.Color
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import jp.co.cyberagent.dojo2020.data.CategoryRepository
@@ -19,34 +21,47 @@ import kotlinx.coroutines.launch
 class MemoCreateViewModel @ViewModelInject constructor(
     private val draftRepository: DraftRepository,
     private val categoryRepository: CategoryRepository,
-    userInfoRepository: UserInfoRepository
-) : ViewModel() {
+    userInfoRepository: UserInfoRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val userInfoFlow = userInfoRepository.fetchUserInfo()
 
     @ExperimentalCoroutinesApi
     val categorySetLiveData = userInfoFlow.flatMapLatest { firebaseUserInfo ->
+        val defaultCategoryList = Category.defaultCategoryList(application)
         val uid = firebaseUserInfo?.uid
 
         val categoryListFlow = categoryRepository.fetchAllCategory(uid)
-        val categorySetFlow = categoryListFlow.map { it.toSet() }
+        val categorySetFlow = categoryListFlow.map { (defaultCategoryList + it).toSet() }
 
         categorySetFlow
     }.asLiveData()
 
-    fun addDraft(title: String, content: String, category: String) = viewModelScope.launch {
-        val draft = Draft.createDraft(title, Content(content), Category(category))
+    fun addDraft(
+        title: String,
+        content: String,
+        categoryName: String,
+        categoryColor: Color
+    ) = viewModelScope.launch {
+
+        val draft = Draft.createDraft(
+            title,
+            Content(content),
+            Category(categoryName, categoryColor)
+        )
 
         draftRepository.saveDraft(draft)
     }
 
-    fun addCategory(categoryName: String) = viewModelScope.launch {
+    fun addCategory(categoryName: String, categoryColor: Color) = viewModelScope.launch {
 
         userInfoFlow.accessWithUid { uid ->
             categoryRepository.saveCategory(
                 uid,
-                Category(categoryName)
+                Category(categoryName, categoryColor)
             )
         }
     }
+
 }

@@ -40,7 +40,7 @@ class DefaultCategoryDataSource @Inject constructor(
     }
 
     private fun Category.toEntity(): CategoryEntity {
-        return CategoryEntity(name)
+        return CategoryEntity(name, color)
     }
 }
 

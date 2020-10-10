@@ -3,21 +3,26 @@ package jp.co.cyberagent.dojo2020.ui.widget
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import jp.co.cyberagent.dojo2020.R
+import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.databinding.LayoutBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.random.Random
 
 interface OnClickChipListener {
-    fun onClick(categoryName: String)
+    fun onClick(category: Category)
 }
 
 class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListener) :
@@ -41,8 +46,8 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
 
             viewModel = memoCreateViewModel
             onChipClickListener = object : OnClickChipListener {
-                override fun onClick(categoryName: String) {
-                    onClickChipListener.onClick(categoryName)
+                override fun onClick(category: Category) {
+                    onClickChipListener.onClick(category)
                     dismiss()
                 }
             }
@@ -58,16 +63,18 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
         with(binding) {
 
             val onClick: (View) -> Unit = {
-                val categoryName = addCategoryTextField.editText?.text.toString()
+                val name = addCategoryTextField.text.toString()
+                val color = Color.valueOf(addCategoryTextFieldLayout.boxBackgroundColor)
+                val category = Category(name, color)
 
-                memoCreateViewModel.addCategory(categoryName)
-                onClickChipListener.onClick(categoryName)
+                memoCreateViewModel.addCategory(name, color)
+                onClickChipListener.onClick(category)
                 dismiss()
             }
 
             addCategoryButton.setOnClickListener(onClick)
 
-            with(addCategoryTextField) {
+            with(addCategoryTextFieldLayout) {
                 editText?.doOnTextChanged { text, _, _, _ ->
                     addCategoryButton.visibility =
                         if (text?.length == 0) View.GONE else View.VISIBLE
@@ -76,8 +83,9 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                 }
 
                 setEndIconOnClickListener {
-                    val color = pickColor()
+                    val color = pickColor().toArgb()
 
+                    boxBackgroundColor = color
                     editText?.background?.colorFilter = PorterDuffColorFilter(
                         color,
                         PorterDuff.Mode.SRC_IN
@@ -88,9 +96,9 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
         }
     }
 
-    private fun pickColor(): Int {
-        fun genElement() = Random.nextInt(256)
+    private fun pickColor(): Color {
+        fun randomElem() = Random.nextInt(256).toFloat()
 
-        return Color.rgb(genElement(), genElement(), genElement())
+        return Color.valueOf(randomElem(), randomElem(), randomElem())
     }
 }
