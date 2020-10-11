@@ -1,4 +1,4 @@
-package jp.co.cyberagent.dojo2020.ui.create
+package jp.co.cyberagent.dojo2020.ui.create.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -9,7 +9,7 @@ import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
-import jp.co.cyberagent.dojo2020.ui.home.visibleOrGone
+import jp.co.cyberagent.dojo2020.ui.home.adapter.visibleOrGone
 import jp.co.cyberagent.dojo2020.ui.widget.OnClickChipListener
 
 @BindingAdapter("app:visibility")
