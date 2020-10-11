@@ -20,4 +20,4 @@ fun binsStopWatchIcon(imageButton: ImageButton, isStarting: Boolean) {
     imageButton.showImage(if (isStarting) icStartingTimer else icStoppingTimer)
 }
 
-private fun visibleOrGone(isVisible: Boolean) = if (isVisible) View.VISIBLE else View.GONE
+fun visibleOrGone(isVisible: Boolean) = if (isVisible) View.VISIBLE else View.GONE

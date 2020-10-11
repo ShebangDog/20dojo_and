@@ -1,6 +1,7 @@
 package jp.co.cyberagent.dojo2020.ui.create
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +14,12 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
+import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.Color
 import jp.co.cyberagent.dojo2020.databinding.FragmentMemoCreateBinding
-import jp.co.cyberagent.dojo2020.ui.create.spinner.CustomOnItemSelectedListener
-import jp.co.cyberagent.dojo2020.ui.create.spinner.SpinnerAdapter
 import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog
 import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog.Companion.TAG
+import jp.co.cyberagent.dojo2020.ui.widget.OnClickChipListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
@@ -61,34 +63,26 @@ class MemoCreateFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            val spinnerAdapter = SpinnerAdapter.getInstance(requireContext()).apply {
-                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            }
-
-            categorySpinner.apply {
-                adapter = spinnerAdapter
-                onItemSelectedListener = CustomOnItemSelectedListener(
-                    this@MemoCreateFragment::showDialog
-                )
-
-                setSelection(1)
-            }
-
-            memoCreateViewModel.categoryListLiveData.observe(viewLifecycleOwner) { categorySet ->
-                spinnerAdapter.apply {
-                    clear()
-                    addAll(SpinnerAdapter.defaultItemList(context))
-                    addAll(categorySet.map { it.name })
-                    notifyDataSetChanged()
+            categoryChip.setOnClickListener {
+                val onClick = object : OnClickChipListener {
+                    override fun onClick(category: Category) {
+                        categoryChip.text = category.name
+                        categoryChip.chipBackgroundColor = ColorStateList.valueOf(
+                            category.color.value
+                        )
+                    }
                 }
+
+                showDialog(onClick)
             }
 
             memoCreateToolBarLayout.addButton.setOnClickListener {
                 val title = titleTextEdit.text.toString()
                 val content = contentTextEdit.text.toString()
-                val category = categorySpinner.selectedItem.toString()
+                val categoryName = categoryChip.text.toString()
+                val categoryColor = Color.valueOf(categoryChip.chipBackgroundColor?.defaultColor)
 
-                memoCreateViewModel.addDraft(title, content, category)
+                memoCreateViewModel.addDraft(title, content, categoryName, categoryColor)
 
                 showHome()
             }
@@ -125,8 +119,8 @@ class MemoCreateFragment : Fragment() {
         }
     }
 
-    private fun showDialog() {
-        CustomBottomSheetDialog().apply {
+    private fun showDialog(onClickListener: OnClickChipListener) {
+        CustomBottomSheetDialog(onClickListener).apply {
             show(activityInFragment.supportFragmentManager, TAG)
         }
     }

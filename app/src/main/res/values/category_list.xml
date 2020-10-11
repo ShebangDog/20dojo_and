@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="spinner_item">
-        <item>+</item>
-        <item>None</item>
+    <string-array name="category_list">
         <item>Kotlin</item>
         <item>Android</item>
         <item>iOS</item>

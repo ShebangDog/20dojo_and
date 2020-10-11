@@ -25,13 +25,16 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/memo_create_tool_bar_layout">
 
-            <Spinner
-                android:id="@+id/category_spinner"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/category_chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/small_margin"
                 android:layout_marginTop="@dimen/small_margin"
                 android:layout_marginEnd="@dimen/small_margin"
+                android:text="Category"
+                app:chipStrokeColor="@android:color/black"
+                app:chipStrokeWidth="1dp"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,7 +50,7 @@
                 android:maxLines="1"
                 android:nextFocusDown="@id/content_text_edit"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/category_spinner"
+                app:layout_constraintRight_toLeftOf="@id/category_chip"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <requestFocus />
