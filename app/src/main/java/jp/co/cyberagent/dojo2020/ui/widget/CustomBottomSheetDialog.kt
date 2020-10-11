@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.children
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Color
@@ -74,7 +76,16 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                     addCategoryButton.visibility =
                         if (text?.length == 0) View.GONE else View.VISIBLE
 
-                    addCategoryButton.setBackgroundColor(context.getColor(R.color.colorGray))
+                    val contains = chipGroup.children
+                        .map { if (it is Chip) it.text.toString() else null }
+                        .filterNotNull()
+                        .contains(text?.toString())
+
+                    addCategoryButton.background.setTint(
+                        if (contains) android.graphics.Color.GRAY else context.getColor(R.color.secondaryColor)
+                    )
+
+                    addCategoryButton.isClickable = !contains
                 }
 
                 setEndIconOnClickListener {
