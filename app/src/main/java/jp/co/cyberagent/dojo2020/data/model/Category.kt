@@ -6,6 +6,10 @@ import kotlin.random.Random
 
 data class Category(val name: String, val color: Color) : Comparable<Category> {
 
+    init {
+        require(name.length <= maxLength)
+    }
+
     override fun compareTo(other: Category): Int {
         if (this.name == other.name) return 0
         if (this.name == defaultCategory) return -1
@@ -22,9 +26,9 @@ data class Category(val name: String, val color: Color) : Comparable<Category> {
     override fun hashCode(): Int {
         return name.hashCode()
     }
-
     companion object {
         const val defaultCategory = "None"
+        const val maxLength = 10
 
         fun defaultCategoryList(context: Context): List<Category> {
             val nameList = context.resources.getStringArray(R.array.category_list).toList()
