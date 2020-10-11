@@ -12,6 +12,8 @@
             name="onChipClickListener"
             type="jp.co.cyberagent.dojo2020.ui.widget.OnClickChipListener" />
 
+        <import type="jp.co.cyberagent.dojo2020.data.model.Category" />
+
     </data>
 
     <LinearLayout
@@ -80,8 +82,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:layout_weight="1"
-                android:hint="make_your_own_category"
+                android:hint="@string/hint_category"
                 android:paddingBottom="8dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="@{Category.maxLength}"
                 app:endIconDrawable="@drawable/ic_sync"
                 app:endIconMode="custom">
 

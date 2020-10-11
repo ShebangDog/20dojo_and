@@ -80,11 +80,13 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                         .filterNotNull()
                         .contains(text?.toString())
 
+                    val isOver = text.toString().length > Category.maxLength
+
                     addCategoryButton.background.setTint(
-                        if (contains) android.graphics.Color.GRAY else context.getColor(R.color.secondaryColor)
+                        if (contains || isOver) android.graphics.Color.GRAY else context.getColor(R.color.secondaryColor)
                     )
 
-                    addCategoryButton.isClickable = !contains
+                    addCategoryButton.isClickable = !contains && !isOver
                 }
 
                 setEndIconOnClickListener {
@@ -95,5 +97,11 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
             }
 
         }
+    }
+
+    private fun formatForHelper(text: CharSequence?): String {
+        val length = text.toString().length
+
+        return "$length/${Category.maxLength}"
     }
 }
