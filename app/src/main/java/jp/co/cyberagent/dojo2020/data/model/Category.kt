@@ -26,6 +26,7 @@ data class Category(val name: String, val color: Color) : Comparable<Category> {
     override fun hashCode(): Int {
         return name.hashCode()
     }
+
     companion object {
         const val defaultCategory = "None"
         const val maxLength = 10
@@ -42,6 +43,8 @@ data class Category(val name: String, val color: Color) : Comparable<Category> {
 }
 
 class Color private constructor(internalColor: android.graphics.Color) {
+    constructor() : this(android.graphics.Color())
+
     val value = internalColor.toArgb()
 
     companion object {

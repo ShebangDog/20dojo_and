@@ -1,36 +1,42 @@
 package jp.co.cyberagent.dojo2020.data.remote.firestore.memo
 
-import jp.co.cyberagent.dojo2020.data.model.Category
-import jp.co.cyberagent.dojo2020.data.model.Color
 import jp.co.cyberagent.dojo2020.data.model.Content
 import jp.co.cyberagent.dojo2020.data.model.Memo
+import jp.co.cyberagent.dojo2020.data.remote.firestore.category.CategoryEntity
 
 data class MemoEntity(
     val id: String? = null,
     val title: String? = null,
-    val contentText: String? = null,
+    val content: ContentEntity? = null,
     val time: Long? = null,
-    val categoryName: String? = null,
-    val categoryColor: Color? = null
+    val category: CategoryEntity? = null
 ) {
     fun modelOrNull(): Memo? {
+        val nullableCategory = category?.modelOrNull()
+        val nullableContent = content?.modelOrNull()
+
         val containsNull = listOf(
             id,
             title,
-            contentText,
+            nullableContent?.text,
             time,
-            categoryName,
-            categoryColor
+            nullableCategory?.name,
+            nullableCategory?.color
         ).contains(null)
 
         if (containsNull) {
             return null
         }
 
-        val category = Category(categoryName!!, categoryColor!!)
-        val content = Content(contentText!!)
-
-        return Memo(id!!, title!!, content, time!!, category)
+        return Memo(id!!, title!!, nullableContent!!, time!!, nullableCategory!!)
     }
 
+}
+
+data class ContentEntity(val text: String? = null) {
+    fun modelOrNull(): Content? {
+        text ?: return null
+
+        return Content(text)
+    }
 }

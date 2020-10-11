@@ -59,7 +59,7 @@ class DefaultFirestoreCategoryDataSource @Inject constructor() : FirestoreCatego
     }
 
     private fun Category.toEntity(): CategoryEntity {
-        return CategoryEntity(name)
+        return CategoryEntity(name, color)
     }
 
 }

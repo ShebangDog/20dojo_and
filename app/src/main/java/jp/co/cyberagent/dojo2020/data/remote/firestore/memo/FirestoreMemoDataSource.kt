@@ -6,8 +6,11 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.Content
 import jp.co.cyberagent.dojo2020.data.model.Memo
 import jp.co.cyberagent.dojo2020.data.remote.firestore.FirestoreConstants
+import jp.co.cyberagent.dojo2020.data.remote.firestore.category.CategoryEntity
 import jp.co.cyberagent.dojo2020.data.remote.firestore.memosRef
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -90,9 +93,16 @@ class DefaultFirestoreMemoDataSource @Inject constructor() : FirestoreMemoDataSo
     }
 
     private fun Memo.toEntity(): MemoEntity {
-        return MemoEntity(id, title, contents.text, time, category.name)
+        return MemoEntity(id, title, contents.toEntity(), time, category.toEntity())
     }
 
+    private fun Category.toEntity(): CategoryEntity {
+        return CategoryEntity(name, color)
+    }
+
+    private fun Content.toEntity(): ContentEntity {
+        return ContentEntity(text)
+    }
 }
 
 @Module
