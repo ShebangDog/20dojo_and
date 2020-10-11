@@ -13,7 +13,6 @@
             type="jp.co.cyberagent.dojo2020.ui.widget.OnClickChipListener" />
 
         <import type="jp.co.cyberagent.dojo2020.data.model.Category" />
-
     </data>
 
     <LinearLayout

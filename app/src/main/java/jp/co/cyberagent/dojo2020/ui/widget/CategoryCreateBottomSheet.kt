@@ -13,7 +13,7 @@ import com.google.android.material.chip.Chip
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Color
-import jp.co.cyberagent.dojo2020.databinding.FragmentCustomBottomSheetDialogBinding
+import jp.co.cyberagent.dojo2020.databinding.FragmentCategoryCreateBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -27,7 +27,7 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
         const val TAG = "CustomBottomSheetDialog"
     }
 
-    private lateinit var binding: FragmentCustomBottomSheetDialogBinding
+    private lateinit var binding: FragmentCategoryCreateBottomSheetBinding
     private val memoCreateViewModel by activityViewModels<MemoCreateViewModel>()
 
     @ExperimentalCoroutinesApi
@@ -37,7 +37,7 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = FragmentCustomBottomSheetDialogBinding.inflate(inflater).apply {
+        binding = FragmentCategoryCreateBottomSheetBinding.inflate(inflater).apply {
             lifecycleOwner = viewLifecycleOwner
 
             viewModel = memoCreateViewModel
