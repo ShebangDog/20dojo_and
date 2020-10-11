@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel" />
+
+        <variable
+            name="onChipClickListener"
+            type="jp.co.cyberagent.dojo2020.ui.widget.OnClickChipListener" />
+
+        <import type="jp.co.cyberagent.dojo2020.data.model.Category" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:visibility="@{(viewModel.categorySetLiveData != null) ? !viewModel.categorySetLiveData.empty : false}">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/middle_margin"
+            android:layout_marginTop="@dimen/middle_margin"
+            android:paddingStart="8dp"
+            android:paddingEnd="0dp"
+            android:text="Select Category"
+            android:textSize="@dimen/middle_text"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="@dimen/middle_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:background="@color/colorGray" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/large_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            app:categories="@{viewModel.categorySetLiveData}"
+            app:onCategoryChipClick="@{onChipClickListener}"
+            app:singleSelection="true">
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/small_margin"
+            android:background="@color/colorGray"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+</layout>
