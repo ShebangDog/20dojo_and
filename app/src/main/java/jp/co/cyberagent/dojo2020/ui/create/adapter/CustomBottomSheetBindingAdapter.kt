@@ -10,7 +10,7 @@ import com.google.android.material.chip.ChipGroup
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.ui.home.adapter.visibleOrGone
-import jp.co.cyberagent.dojo2020.ui.widget.OnClickChipListener
+import jp.co.cyberagent.dojo2020.ui.widget.OnChipClickListener
 
 @BindingAdapter("app:visibility")
 fun bindVisibility(linearLayout: LinearLayout, isVisible: Boolean) {
@@ -21,14 +21,14 @@ fun bindVisibility(linearLayout: LinearLayout, isVisible: Boolean) {
 fun bindChips(
     chipGroup: ChipGroup,
     categorySet: Set<Category>?,
-    onClickChipListener: OnClickChipListener
+    onChipClickListener: OnChipClickListener
 ) {
 
     chipGroup.removeAllViews()
     categorySet?.forEach { category ->
         chipGroup.addView(
             createChip(chipGroup.context, category) {
-                onClickChipListener.onClick(it)
+                onChipClickListener.onClick(it)
             },
             0
         )
@@ -38,7 +38,7 @@ fun bindChips(
 private fun createChip(
     context: Context,
     category: Category,
-    onClickChip: (Category) -> Unit
+    onChipClick: (Category) -> Unit
 ): Chip {
     val chip = Chip(context)
     val chipDrawable = ChipDrawable.createFromAttributes(
@@ -50,7 +50,7 @@ private fun createChip(
 
     return chip.apply {
         setChipDrawable(chipDrawable)
-        setOnClickListener { onClickChip(category) }
+        setOnClickListener { onChipClick(category) }
 
         text = category.name
         chipBackgroundColor = ColorStateList.valueOf(category.color.value)

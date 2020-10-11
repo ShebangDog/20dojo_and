@@ -17,12 +17,14 @@ import jp.co.cyberagent.dojo2020.databinding.FragmentCategoryCreateBottomSheetBi
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-interface OnClickChipListener {
+interface OnChipClickListener {
     fun onClick(category: Category)
 }
 
-class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListener) :
-    BottomSheetDialogFragment() {
+class CustomBottomSheetDialog(
+    private val onEachChipClickListener: OnChipClickListener
+) : BottomSheetDialogFragment() {
+
     companion object {
         const val TAG = "CustomBottomSheetDialog"
     }
@@ -41,9 +43,9 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
             lifecycleOwner = viewLifecycleOwner
 
             viewModel = memoCreateViewModel
-            onChipClickListener = object : OnClickChipListener {
+            onChipClickListener = object : OnChipClickListener {
                 override fun onClick(category: Category) {
-                    onClickChipListener.onClick(category)
+                    onEachChipClickListener.onClick(category)
                     dismiss()
                 }
             }
@@ -64,7 +66,7 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                 val category = Category(name, color)
 
                 memoCreateViewModel.addCategory(name, color)
-                onClickChipListener.onClick(category)
+                onEachChipClickListener.onClick(category)
                 dismiss()
             }
 
