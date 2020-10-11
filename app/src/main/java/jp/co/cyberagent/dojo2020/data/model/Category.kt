@@ -65,9 +65,9 @@ class Color private constructor(internalColor: android.graphics.Color) {
         }
 
         fun pickColor(): Color {
-            val randomElem = Random.nextInt(256)
+            fun randomElem() = Random.nextInt(256)
 
-            return valueOf(randomElem, randomElem, randomElem)
+            return valueOf(randomElem(), randomElem(), randomElem())
         }
     }
 }
