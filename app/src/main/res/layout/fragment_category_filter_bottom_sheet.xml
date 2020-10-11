@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel" />
+
+        <variable
+            name="onChipClickListener"
+            type="jp.co.cyberagent.dojo2020.ui.widget.OnChipClickListener" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/category_list_layout"
+            layout="@layout/layout_category_list"
+            app:onChipClickListener="@{onChipClickListener}"
+            app:viewModel="@{viewModel}" />
+
+    </LinearLayout>
+</layout>

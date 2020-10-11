@@ -9,13 +9,13 @@ import jp.co.cyberagent.dojo2020.data.DraftRepository
 import jp.co.cyberagent.dojo2020.data.FlowTimer
 import jp.co.cyberagent.dojo2020.data.MemoRepository
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
-import jp.co.cyberagent.dojo2020.data.model.Draft
-import jp.co.cyberagent.dojo2020.data.model.Memo
-import jp.co.cyberagent.dojo2020.data.model.toText
+import jp.co.cyberagent.dojo2020.data.model.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+
+typealias Filter = (Text) -> Boolean
 
 class HomeViewModel @ViewModelInject constructor(
     private val draftRepository: DraftRepository,
@@ -24,7 +24,24 @@ class HomeViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
+
+    @ExperimentalCoroutinesApi
+    private val filterStateFlow: MutableStateFlow<Filter?> = MutableStateFlow(null)
     val userLiveData = userFlow.asLiveData()
+
+    @ExperimentalCoroutinesApi
+    private val textListFlow = userFlow.flatMapLatest { userInfo ->
+        val uid = userInfo?.uid
+
+        draftRepository.fetchAllDraft()
+            .combine(memoRepository.fetchAllMemo(uid)) { draftList, memoList ->
+
+                val leftList = draftList.map { it.toText() }.sortedBy { it.category }
+                val rightList = memoList.map { it.toText() }.sortedBy { it.category }
+
+                (leftList + rightList).distinctBy { it.id }
+            }
+    }
 
     @ExperimentalCoroutinesApi
     fun timeLiveData(draft: Draft): LiveData<Long> {
@@ -36,25 +53,13 @@ class HomeViewModel @ViewModelInject constructor(
     }
 
     @ExperimentalCoroutinesApi
-    val textListLiveData = userFlow.flatMapLatest { userInfo ->
-        val uid = userInfo?.uid
-
-        draftRepository.fetchAllDraft()
-            .combine(memoRepository.fetchAllMemo(uid)) { draftList, memoList ->
-
-                val leftList = draftList.map { it.toText() }.sortedBy { it.category }
-                val rightList = memoList.map { it.toText() }.sortedBy { it.category }
-
-                (leftList + rightList).distinctBy { it.id }
-            }
+    val filteredTextListLiveData = textListFlow.combine(filterStateFlow) { textList, filter ->
+        textList.filter { filter?.invoke(it) ?: true }
     }.asLiveData()
 
-    fun filter() = viewModelScope.launch {
-        userFlow.collect { userInfo ->
-            memoRepository.fetchAllMemo(userInfo?.uid).collect { memoList ->
-                memoList.filter { it.category.name == "kotlin" }
-            }
-        }
+    @ExperimentalCoroutinesApi
+    fun filter(category: Category) = viewModelScope.launch {
+        filterStateFlow.value = { it.category == category }
     }
 
     fun saveDraft(draft: Draft) = viewModelScope.launch {
@@ -73,4 +78,5 @@ class HomeViewModel @ViewModelInject constructor(
 
     private fun addTimeToMemo(memo: Memo, time: Long) = memo
         .let { Memo(it.id, it.title, it.contents, time + it.time, it.category) }
+
 }
