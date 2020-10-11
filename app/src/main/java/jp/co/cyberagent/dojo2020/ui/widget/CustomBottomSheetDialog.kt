@@ -1,7 +1,6 @@
 package jp.co.cyberagent.dojo2020.ui.widget
 
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -61,7 +60,7 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
 
             val onClick: (View) -> Unit = {
                 val name = addCategoryTextField.text.toString()
-                val color = Color.valueOf(addCategoryTextFieldLayout.boxBackgroundColor)
+                val color = Color.valueOf(addCategoryTextField.backgroundTintList?.defaultColor)
                 val category = Category(name, color)
 
                 memoCreateViewModel.addCategory(name, color)
@@ -91,11 +90,7 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                 setEndIconOnClickListener {
                     val color = Color.pickColor()
 
-                    boxBackgroundColor = color.value
-                    editText?.background?.colorFilter = PorterDuffColorFilter(
-                        color.value,
-                        PorterDuff.Mode.SRC_IN
-                    )
+                    editText?.backgroundTintList = ColorStateList.valueOf(color.value)
                 }
             }
 
