@@ -36,9 +36,8 @@ class DefaultFirestoreProfileDataSource @Inject constructor() : FirestoreProfile
             exception?.message?.run { return@addSnapshotListener }
 
             val profileEntity = snapshot?.toObject(ProfileEntity::class.java)
-            profileEntity ?: return@addSnapshotListener
 
-            offer(profileEntity.toModel())
+            offer(profileEntity?.toModel())
         }.also { awaitClose { it.remove() } }
     }
 
