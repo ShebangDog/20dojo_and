@@ -28,7 +28,7 @@
 
         <variable
             name="listeners"
-            type="jp.co.cyberagent.dojo2020.ui.home.TextAdapter.Listeners" />
+            type="jp.co.cyberagent.dojo2020.ui.home.adapter.TextAdapter.Listeners" />
 
     </data>
 

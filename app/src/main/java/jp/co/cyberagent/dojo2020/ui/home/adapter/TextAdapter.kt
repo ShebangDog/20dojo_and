@@ -1,4 +1,4 @@
-package jp.co.cyberagent.dojo2020.ui.home
+package jp.co.cyberagent.dojo2020.ui.home.adapter
 
 import android.view.LayoutInflater
 import android.view.View

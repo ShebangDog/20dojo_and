@@ -17,6 +17,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Text
 import jp.co.cyberagent.dojo2020.databinding.FragmentHomeBinding
+import jp.co.cyberagent.dojo2020.ui.home.adapter.OnAppearListener
+import jp.co.cyberagent.dojo2020.ui.home.adapter.OnTimerClickListener
+import jp.co.cyberagent.dojo2020.ui.home.adapter.TextAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.concurrent.TimeUnit
 
