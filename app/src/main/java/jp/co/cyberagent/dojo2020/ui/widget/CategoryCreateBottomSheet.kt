@@ -75,7 +75,7 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                     addCategoryButton.visibility =
                         if (text?.length == 0) View.GONE else View.VISIBLE
 
-                    val contains = chipGroup.children
+                    val contains = categoryListLayout.chipGroup.children
                         .map { if (it is Chip) it.text.toString() else null }
                         .filterNotNull()
                         .contains(text?.toString())
