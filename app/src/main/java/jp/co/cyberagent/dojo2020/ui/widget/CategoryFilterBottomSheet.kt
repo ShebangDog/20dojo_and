@@ -57,5 +57,4 @@ class CategoryFilterBottomSheet(
         return binding.root
     }
 
-
 }

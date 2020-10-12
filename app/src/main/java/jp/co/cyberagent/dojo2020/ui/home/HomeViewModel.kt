@@ -1,6 +1,6 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
-import android.content.ContentValues.TAG
+import android.content.ContentValues
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -16,7 +16,6 @@ import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Draft
 import jp.co.cyberagent.dojo2020.data.model.Memo
 import jp.co.cyberagent.dojo2020.data.model.toText
-import jp.co.cyberagent.dojo2020.ui.widget.CategoryFilterBottomSheet
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -70,8 +69,8 @@ class HomeViewModel @ViewModelInject constructor(
     @ExperimentalCoroutinesApi
     fun filter(chip: Chip, category: Category) = viewModelScope.launch {
         chipStateFlow.value = when (chip.isChecked) {
-            true -> chipStateFlow.first() + category
-            false -> chipStateFlow.first().filter { it != category }.toSet()
+            true -> (chipStateFlow.value + category).also { Log.d(ContentValues.TAG, "isChecked $it") }
+            false -> chipStateFlow.value.filter { it != category }.toSet().also { Log.d(ContentValues.TAG, "isNotChecked $it") }
         }
     }
 

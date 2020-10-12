@@ -33,6 +33,7 @@
         <include
             android:id="@+id/category_list_layout"
             layout="@layout/layout_category_list"
+            app:chipStateSet="@{chipStateSet}"
             app:chipType="@{ChipType.Filter.INSTANCE}"
             app:isSingleSelection="@{false}"
             app:onFilterChipClickListener="@{onChipClickListener}"

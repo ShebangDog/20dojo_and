@@ -28,7 +28,7 @@ fun bindVisibility(linearLayout: LinearLayout, isVisible: Boolean) {
 @BindingAdapter(
     "app:chipType",
     "app:categories",
-    "app:chipStateMap",
+    "app:chipStateSet",
     "app:onCategoryChoiceClick",
     "app:onCategoryFilterChipClick",
     requireAll = false
@@ -37,15 +37,17 @@ fun bindChips(
     chipGroup: ChipGroup,
     type: ChipType,
     categorySet: Set<Category>? = null,
-    chipStateMap: HashMap<Category, CategoryFilterBottomSheet.ChipState>? = null,
+    chipStateSet: Set<Category>? = null,
     onChoiceChipClickListener: CategoryCreateBottomSheet.OnChipClickListener? = null,
     onFilterChipClickListener: CategoryFilterBottomSheet.OnChipClickListener? = null
 ) {
 
     chipGroup.removeAllViews()
     categorySet?.forEach {
+        val isChecked = chipStateSet?.contains(it) ?: false
+
         chipGroup.addView(
-            createChip(chipGroup, type.style, it, chipStateMap?.get(it)) { chip, category ->
+            createChip(chipGroup, type.style, it, isChecked) { chip, category ->
                 when (type) {
                     ChipType.Action -> {
                     }
@@ -67,7 +69,7 @@ private fun createChip(
     chipGroup: ChipGroup,
     @StyleRes style: Int,
     category: Category,
-    chipState: CategoryFilterBottomSheet.ChipState?,
+    isChipChecked: Boolean,
     onChipClick: (Chip, Category) -> Unit
 ): Chip {
     val chip = Chip(chipGroup.context)
@@ -84,8 +86,6 @@ private fun createChip(
 
         text = category.name
         chipBackgroundColor = ColorStateList.valueOf(category.color.value)
-
-        chipState ?: return@apply
-        isChecked = if (chipGroup.isSingleSelection) isChecked else chipState.isChecked
+        isChecked = isChipChecked
     }
 }

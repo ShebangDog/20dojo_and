@@ -26,9 +26,9 @@
         <include
             android:id="@+id/category_list_layout"
             layout="@layout/layout_category_list"
-            app:onChoiceChipClickListener="@{onChipClickListener}"
             app:chipType="@{ChipType.Choice.INSTANCE}"
             app:isSingleSelection="@{true}"
+            app:onChoiceChipClickListener="@{onChipClickListener}"
             app:viewModel="@{viewModel}" />
 
         <LinearLayout

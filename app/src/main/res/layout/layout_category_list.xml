@@ -5,6 +5,10 @@
     <data>
 
         <variable
+            name="chipStateSet"
+            type="androidx.lifecycle.LiveData&lt;java.util.Set&lt;Category>>" />
+
+        <variable
             name="viewModel"
             type="jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel" />
 
@@ -59,6 +63,7 @@
             android:layout_marginHorizontal="@dimen/large_margin"
             android:layout_marginTop="@dimen/small_margin"
             app:categories="@{viewModel.categorySetLiveData}"
+            app:chipStateSet="@{chipStateSet}"
             app:chipType="@{chipType}"
             app:onCategoryChoiceClick="@{onChoiceChipClickListener}"
             app:onCategoryFilterChipClick="@{onFilterChipClickListener}"
