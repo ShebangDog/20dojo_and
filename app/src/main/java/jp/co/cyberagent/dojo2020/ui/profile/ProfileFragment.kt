@@ -89,7 +89,7 @@ class ProfileFragment : Fragment() {
 
             profileViewModel.totalTimeLiveData.observe(viewLifecycleOwner) { totalTime ->
                 totalTimeLayout.apply {
-                    nameTextView.text = getString(R.string.TotalTime)
+                    nameTextView.text = getString(R.string.total_time)
                     valueTextView.text = totalTime.toString()
                 }
 
