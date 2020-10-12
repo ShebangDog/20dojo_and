@@ -1,6 +1,7 @@
 package jp.co.cyberagent.dojo2020.ui.create.adapter
 
 import android.content.res.ColorStateList
+import android.widget.Button
 import android.widget.LinearLayout
 import androidx.annotation.StyleRes
 import androidx.databinding.BindingAdapter
@@ -23,6 +24,11 @@ sealed class ChipType(@StyleRes val style: Int) {
 @BindingAdapter("app:visibility")
 fun bindVisibility(linearLayout: LinearLayout, isVisible: Boolean) {
     linearLayout.visibility = visibleOrGone(isVisible)
+}
+
+@BindingAdapter("app:visibility")
+fun bindVisibility(button: Button, isVisible: Boolean) {
+    button.visibility = visibleOrGone(isVisible)
 }
 
 @BindingAdapter(

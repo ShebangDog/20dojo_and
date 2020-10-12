@@ -13,6 +13,10 @@
             type="jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel" />
 
         <variable
+            name="onResetButtonClickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
             name="chipType"
             type="jp.co.cyberagent.dojo2020.ui.create.adapter.ChipType" />
 
@@ -38,16 +42,43 @@
         android:orientation="vertical"
         app:visibility="@{(viewModel.categorySetLiveData != null) ? !viewModel.categorySetLiveData.empty : false}">
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/middle_margin"
-            android:layout_marginTop="@dimen/middle_margin"
-            android:paddingStart="8dp"
-            android:paddingEnd="0dp"
-            android:text="Select Category"
-            android:textSize="@dimen/middle_text"
-            android:textStyle="bold" />
+            android:minHeight="48dp">
+
+            <TextView
+                android:id="@+id/select_category_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/middle_margin"
+                android:layout_marginTop="12dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="0dp"
+                android:text="Select Category"
+                android:textSize="@dimen/middle_text"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/reset_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/large_margin"
+                android:minWidth="0dp"
+                android:minHeight="40dp"
+                android:onClick="@{onResetButtonClickListener}"
+                android:text="reset"
+                android:textSize="@dimen/small_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:visibility="@{chipStateSet == null ? false : !chipStateSet.empty}" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:layout_width="match_parent"

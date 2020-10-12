@@ -47,6 +47,7 @@ class CategoryFilterBottomSheet(
             viewModel = memoCreateViewModel
 
             chipStateSet = homeViewModel.chipStateLiveData
+            onResetButtonClickListener = View.OnClickListener { homeViewModel.clearFilter() }
             onChipClickListener = object : OnChipClickListener {
                 override fun onClick(chip: Chip, category: Category) {
                     onEachChipClickListener.onClick(chip, category)
