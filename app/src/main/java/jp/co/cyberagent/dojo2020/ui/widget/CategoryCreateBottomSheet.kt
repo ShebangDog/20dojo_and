@@ -17,7 +17,7 @@ import jp.co.cyberagent.dojo2020.databinding.FragmentCategoryCreateBottomSheetBi
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class CustomBottomSheetDialog(
+class CategoryCreateBottomSheet(
     private val onEachChipClickListener: OnChipClickListener
 ) : BottomSheetDialogFragment() {
 

@@ -12,7 +12,7 @@ import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.ui.home.adapter.visibleOrGone
 import jp.co.cyberagent.dojo2020.ui.widget.CategoryFilterBottomSheet
-import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog
+import jp.co.cyberagent.dojo2020.ui.widget.CategoryCreateBottomSheet
 
 sealed class ChipType(@StyleRes val style: Int) {
     object Action : ChipType(R.style.Widget_MaterialComponents_Chip_Action)
@@ -37,7 +37,7 @@ fun bindChips(
     chipGroup: ChipGroup,
     type: ChipType,
     categorySet: Set<Category>? = null,
-    onChoiceChipClickListener: CustomBottomSheetDialog.OnChipClickListener? = null,
+    onChoiceChipClickListener: CategoryCreateBottomSheet.OnChipClickListener? = null,
     onFilterChipClickListener: CategoryFilterBottomSheet.OnChipClickListener? = null
 ) {
 

@@ -24,8 +24,8 @@
             android:id="@+id/category_list_layout"
             layout="@layout/layout_category_list"
             app:chipType="@{ChipType.Filter.INSTANCE}"
-            app:onFilterChipClickListener="@{onChipClickListener}"
             app:isSingleSelection="@{false}"
+            app:onFilterChipClickListener="@{onChipClickListener}"
             app:viewModel="@{viewModel}" />
 
     </LinearLayout>
