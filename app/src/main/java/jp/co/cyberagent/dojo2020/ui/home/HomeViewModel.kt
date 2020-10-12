@@ -1,5 +1,7 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -10,13 +12,15 @@ import jp.co.cyberagent.dojo2020.data.DraftRepository
 import jp.co.cyberagent.dojo2020.data.FlowTimer
 import jp.co.cyberagent.dojo2020.data.MemoRepository
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
-import jp.co.cyberagent.dojo2020.data.model.*
+import jp.co.cyberagent.dojo2020.data.model.Category
+import jp.co.cyberagent.dojo2020.data.model.Draft
+import jp.co.cyberagent.dojo2020.data.model.Memo
+import jp.co.cyberagent.dojo2020.data.model.toText
+import jp.co.cyberagent.dojo2020.ui.widget.CategoryFilterBottomSheet
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
-
-typealias Filter = (Text) -> Boolean
 
 class HomeViewModel @ViewModelInject constructor(
     private val draftRepository: DraftRepository,
@@ -27,7 +31,11 @@ class HomeViewModel @ViewModelInject constructor(
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
 
     @ExperimentalCoroutinesApi
-    private val filterStateFlow: MutableStateFlow<Filter?> = MutableStateFlow(null)
+    private val chipStateFlow = MutableStateFlow<Set<Category>>(setOf())
+
+    @ExperimentalCoroutinesApi
+    val chipStateLiveData = chipStateFlow.asLiveData()
+
     val userLiveData = userFlow.asLiveData()
 
     @ExperimentalCoroutinesApi
@@ -54,13 +62,17 @@ class HomeViewModel @ViewModelInject constructor(
     }
 
     @ExperimentalCoroutinesApi
-    val filteredTextListLiveData = textListFlow.combine(filterStateFlow) { textList, filter ->
-        textList.filter { filter?.invoke(it) ?: true }
+    val filteredTextListLiveData = textListFlow.combine(chipStateFlow) { textList, chipStateList ->
+        val isFiltered = chipStateList.isNotEmpty()
+        if (!isFiltered) textList else textList.filter { chipStateList.contains(it.category) }
     }.asLiveData()
 
     @ExperimentalCoroutinesApi
     fun filter(chip: Chip, category: Category) = viewModelScope.launch {
-
+        chipStateFlow.value = when (chip.isChecked) {
+            true -> chipStateFlow.first() + category
+            false -> chipStateFlow.first().filter { it != category }.toSet()
+        }
     }
 
     fun saveDraft(draft: Draft) = viewModelScope.launch {
