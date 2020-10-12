@@ -63,10 +63,10 @@ class CustomBottomSheetDialog(
             val onClick: (View) -> Unit = {
                 val name = addCategoryTextField.text.toString()
                 val color = Color.valueOf(addCategoryTextField.backgroundTintList?.defaultColor)
-//                val category = Category(name, color)
+                val category = Category(name, color)
 
                 memoCreateViewModel.addCategory(name, color)
-//                onEachChipClickListener.onClick(category)
+                onEachChipClickListener.onClick(category)
                 dismiss()
             }
 

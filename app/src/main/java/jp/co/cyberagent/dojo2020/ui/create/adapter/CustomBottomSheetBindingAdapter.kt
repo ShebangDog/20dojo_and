@@ -26,38 +26,36 @@ fun bindVisibility(linearLayout: LinearLayout, isVisible: Boolean) {
     linearLayout.visibility = visibleOrGone(isVisible)
 }
 
-@BindingAdapter("app:chipType", "app:categories", "app:onCategoryFilterChipClick")
+@BindingAdapter(
+    "app:chipType",
+    "app:categories",
+    "app:onCategoryChoiceClick",
+    "app:onCategoryFilterChipClick",
+    requireAll = false
+)
 fun bindChips(
     chipGroup: ChipGroup,
     type: ChipType,
-    categorySet: Set<Category>?,
-    onChipClickListener: CategoryFilterBottomSheet.OnChipClickListener
+    categorySet: Set<Category>? = null,
+    onChoiceChipClickListener: CustomBottomSheetDialog.OnChipClickListener? = null,
+    onFilterChipClickListener: CategoryFilterBottomSheet.OnChipClickListener? = null
 ) {
 
     chipGroup.removeAllViews()
     categorySet?.forEach {
         chipGroup.addView(
             createChip(chipGroup.context, type.style, it) { chip, category ->
-                onChipClickListener.onClick(chip, category)
-            },
-            0
-        )
-    }
-}
+                when (type) {
+                    ChipType.Action -> {
+                    }
 
-@BindingAdapter("app:chipType", "app:categories", "app:onCategoryChoiceClick")
-fun bindChips(
-    chipGroup: ChipGroup,
-    type: ChipType,
-    categorySet: Set<Category>?,
-    onChipClickListener: CustomBottomSheetDialog.OnChipClickListener
-) {
+                    ChipType.Choice -> onChoiceChipClickListener?.onClick(category)
 
-    chipGroup.removeAllViews()
-    categorySet?.forEach {
-        chipGroup.addView(
-            createChip(chipGroup.context, type.style, it) { _, category ->
-                onChipClickListener.onClick(category)
+                    ChipType.Entry -> {
+                    }
+
+                    ChipType.Filter -> onFilterChipClickListener?.onClick(chip, category)
+                }
             },
             0
         )

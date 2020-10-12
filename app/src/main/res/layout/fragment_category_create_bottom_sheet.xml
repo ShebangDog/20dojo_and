@@ -28,7 +28,6 @@
             layout="@layout/layout_category_list"
             app:chipType="@{ChipType.Choice.INSTANCE}"
             app:isSingleSelection="@{true}"
-            app:onChipClickListener="@{onChipClickListener}"
             app:viewModel="@{viewModel}" />
 
         <LinearLayout
