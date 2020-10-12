@@ -67,9 +67,14 @@ class HomeViewModel @ViewModelInject constructor(
     @ExperimentalCoroutinesApi
     fun filter(chip: Chip, category: Category) = viewModelScope.launch {
         chipStateFlow.value = when (chip.isChecked) {
-            true -> (chipStateFlow.value + category)
+            true -> chipStateFlow.value + category
             false -> chipStateFlow.value.filter { it != category }.toSet()
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun clearFilter() = viewModelScope.launch {
+        chipStateFlow.value = setOf()
     }
 
     fun saveDraft(draft: Draft) = viewModelScope.launch {
