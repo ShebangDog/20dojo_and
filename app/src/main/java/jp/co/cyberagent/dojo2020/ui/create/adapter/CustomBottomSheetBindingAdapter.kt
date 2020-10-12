@@ -86,6 +86,6 @@ private fun createChip(
 
         text = category.name
         chipBackgroundColor = ColorStateList.valueOf(category.color.value)
-        isChecked = isChipChecked
+        isChecked = if (chipGroup.isSingleSelection) isChecked else isChipChecked
     }
 }

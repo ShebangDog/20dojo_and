@@ -1,7 +1,5 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
-import android.content.ContentValues
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -69,8 +67,8 @@ class HomeViewModel @ViewModelInject constructor(
     @ExperimentalCoroutinesApi
     fun filter(chip: Chip, category: Category) = viewModelScope.launch {
         chipStateFlow.value = when (chip.isChecked) {
-            true -> (chipStateFlow.value + category).also { Log.d(ContentValues.TAG, "isChecked $it") }
-            false -> chipStateFlow.value.filter { it != category }.toSet().also { Log.d(ContentValues.TAG, "isNotChecked $it") }
+            true -> (chipStateFlow.value + category)
+            false -> chipStateFlow.value.filter { it != category }.toSet()
         }
     }
 
