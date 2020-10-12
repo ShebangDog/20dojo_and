@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.chip.Chip
 import jp.co.cyberagent.dojo2020.data.DraftRepository
 import jp.co.cyberagent.dojo2020.data.FlowTimer
 import jp.co.cyberagent.dojo2020.data.MemoRepository
@@ -58,8 +59,8 @@ class HomeViewModel @ViewModelInject constructor(
     }.asLiveData()
 
     @ExperimentalCoroutinesApi
-    fun filter(category: Category) = viewModelScope.launch {
-        filterStateFlow.value = { it.category == category }
+    fun filter(chip: Chip, category: Category) = viewModelScope.launch {
+
     }
 
     fun saveDraft(draft: Draft) = viewModelScope.launch {

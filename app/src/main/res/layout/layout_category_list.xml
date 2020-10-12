@@ -16,6 +16,11 @@
             name="chipType"
             type="jp.co.cyberagent.dojo2020.ui.create.adapter.ChipType" />
 
+        <variable
+            name="isSingleSelection"
+            type="Boolean" />
+
+
         <import type="jp.co.cyberagent.dojo2020.data.model.Category" />
     </data>
 
@@ -52,7 +57,7 @@
             app:categories="@{viewModel.categorySetLiveData}"
             app:chipType="@{chipType}"
             app:onCategoryChipClick="@{onChipClickListener}"
-            app:singleSelection="true">
+            app:singleSelection="@{isSingleSelection}">
 
         </com.google.android.material.chip.ChipGroup>
 

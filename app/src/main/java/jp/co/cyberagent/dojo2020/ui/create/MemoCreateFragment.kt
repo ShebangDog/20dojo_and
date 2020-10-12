@@ -19,7 +19,6 @@ import jp.co.cyberagent.dojo2020.data.model.Color
 import jp.co.cyberagent.dojo2020.databinding.FragmentMemoCreateBinding
 import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog
 import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog.Companion.TAG
-import jp.co.cyberagent.dojo2020.ui.widget.OnChipClickListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
@@ -64,7 +63,7 @@ class MemoCreateFragment : Fragment() {
 
         with(binding) {
             categoryChip.setOnClickListener {
-                val onClick = object : OnChipClickListener {
+                val onClick = object : CustomBottomSheetDialog.OnChipClickListener {
                     override fun onClick(category: Category) {
                         categoryChip.text = category.name
                         categoryChip.chipBackgroundColor = ColorStateList.valueOf(
@@ -119,7 +118,7 @@ class MemoCreateFragment : Fragment() {
         }
     }
 
-    private fun showDialog(onClickListener: OnChipClickListener) {
+    private fun showDialog(onClickListener: CustomBottomSheetDialog.OnChipClickListener) {
         CustomBottomSheetDialog(onClickListener).apply {
             show(activityInFragment.supportFragmentManager, TAG)
         }

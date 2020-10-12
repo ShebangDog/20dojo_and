@@ -17,13 +17,13 @@ import jp.co.cyberagent.dojo2020.databinding.FragmentCategoryCreateBottomSheetBi
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-interface OnChipClickListener {
-    fun onClick(category: Category)
-}
-
 class CustomBottomSheetDialog(
     private val onEachChipClickListener: OnChipClickListener
 ) : BottomSheetDialogFragment() {
+
+    interface OnChipClickListener {
+        fun onClick(category: Category)
+    }
 
     companion object {
         const val TAG = "CustomBottomSheetDialog"
@@ -63,10 +63,10 @@ class CustomBottomSheetDialog(
             val onClick: (View) -> Unit = {
                 val name = addCategoryTextField.text.toString()
                 val color = Color.valueOf(addCategoryTextField.backgroundTintList?.defaultColor)
-                val category = Category(name, color)
+//                val category = Category(name, color)
 
                 memoCreateViewModel.addCategory(name, color)
-                onEachChipClickListener.onClick(category)
+//                onEachChipClickListener.onClick(category)
                 dismiss()
             }
 
@@ -101,9 +101,4 @@ class CustomBottomSheetDialog(
         }
     }
 
-    private fun formatForHelper(text: CharSequence?): String {
-        val length = text.toString().length
-
-        return "$length/${Category.maxLength}"
-    }
 }

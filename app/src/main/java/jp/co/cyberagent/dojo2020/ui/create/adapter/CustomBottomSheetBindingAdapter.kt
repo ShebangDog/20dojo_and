@@ -11,7 +11,8 @@ import com.google.android.material.chip.ChipGroup
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.ui.home.adapter.visibleOrGone
-import jp.co.cyberagent.dojo2020.ui.widget.OnChipClickListener
+import jp.co.cyberagent.dojo2020.ui.widget.CategoryFilterBottomSheet
+import jp.co.cyberagent.dojo2020.ui.widget.CustomBottomSheetDialog
 
 sealed class ChipType(@StyleRes val style: Int) {
     object Action : ChipType(R.style.Widget_MaterialComponents_Chip_Action)
@@ -25,19 +26,38 @@ fun bindVisibility(linearLayout: LinearLayout, isVisible: Boolean) {
     linearLayout.visibility = visibleOrGone(isVisible)
 }
 
-@BindingAdapter("app:chipType", "app:categories", "app:onCategoryChipClick")
+@BindingAdapter("app:chipType", "app:categories", "app:onCategoryFilterChipClick")
 fun bindChips(
     chipGroup: ChipGroup,
     type: ChipType,
     categorySet: Set<Category>?,
-    onChipClickListener: OnChipClickListener
+    onChipClickListener: CategoryFilterBottomSheet.OnChipClickListener
 ) {
 
     chipGroup.removeAllViews()
-    categorySet?.forEach { category ->
+    categorySet?.forEach {
         chipGroup.addView(
-            createChip(chipGroup.context, type.style, category) {
-                onChipClickListener.onClick(it)
+            createChip(chipGroup.context, type.style, it) { chip, category ->
+                onChipClickListener.onClick(chip, category)
+            },
+            0
+        )
+    }
+}
+
+@BindingAdapter("app:chipType", "app:categories", "app:onCategoryChoiceClick")
+fun bindChips(
+    chipGroup: ChipGroup,
+    type: ChipType,
+    categorySet: Set<Category>?,
+    onChipClickListener: CustomBottomSheetDialog.OnChipClickListener
+) {
+
+    chipGroup.removeAllViews()
+    categorySet?.forEach {
+        chipGroup.addView(
+            createChip(chipGroup.context, type.style, it) { _, category ->
+                onChipClickListener.onClick(category)
             },
             0
         )
@@ -48,7 +68,7 @@ private fun createChip(
     context: Context,
     @StyleRes style: Int,
     category: Category,
-    onChipClick: (Category) -> Unit
+    onChipClick: (Chip, Category) -> Unit
 ): Chip {
     val chip = Chip(context)
     val chipDrawable = ChipDrawable.createFromAttributes(
@@ -60,7 +80,7 @@ private fun createChip(
 
     return chip.apply {
         setChipDrawable(chipDrawable)
-        setOnClickListener { onChipClick(category) }
+        setOnClickListener { onChipClick(chip, category) }
 
         text = category.name
         chipBackgroundColor = ColorStateList.valueOf(category.color.value)

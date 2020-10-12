@@ -15,6 +15,7 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
@@ -24,7 +25,6 @@ import jp.co.cyberagent.dojo2020.ui.home.adapter.OnAppearListener
 import jp.co.cyberagent.dojo2020.ui.home.adapter.OnTimerClickListener
 import jp.co.cyberagent.dojo2020.ui.home.adapter.TextAdapter
 import jp.co.cyberagent.dojo2020.ui.widget.CategoryFilterBottomSheet
-import jp.co.cyberagent.dojo2020.ui.widget.OnChipClickListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.concurrent.TimeUnit
 
@@ -69,11 +69,13 @@ class HomeFragment : Fragment() {
                 }
 
                 filterListImageButton.setOnClickListener {
-                    val onEachChipClickListener = object : OnChipClickListener {
-                        override fun onClick(category: Category) {
-                            homeViewModel.filter(category)
+                    val onEachChipClickListener =
+                        object : CategoryFilterBottomSheet.OnChipClickListener {
+
+                            override fun onClick(chip: Chip, category: Category) {
+                                homeViewModel.filter(chip, category)
+                            }
                         }
-                    }
 
                     showDialog(onEachChipClickListener)
                 }
@@ -81,7 +83,11 @@ class HomeFragment : Fragment() {
 
             val textAdapter = TextAdapter(viewLifecycleOwner, listeners())
             recyclerView.adapter = textAdapter
-            homeViewModel.filteredTextListLiveData.observe(viewLifecycleOwner) { textAdapter.submitList(it) }
+            homeViewModel.filteredTextListLiveData.observe(viewLifecycleOwner) {
+                textAdapter.submitList(
+                    it
+                )
+            }
         }
     }
 
@@ -93,7 +99,7 @@ class HomeFragment : Fragment() {
         findNavController().navigate(R.id.action_homeFragment_to_memoCreateFragment)
     }
 
-    private fun showDialog(onChipClickListener: OnChipClickListener) {
+    private fun showDialog(onChipClickListener: CategoryFilterBottomSheet.OnChipClickListener) {
         CategoryFilterBottomSheet(onChipClickListener).apply {
             show(activityInFragment.supportFragmentManager, CategoryFilterBottomSheet.TAG)
         }

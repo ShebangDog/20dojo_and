@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.databinding.FragmentCategoryFilterBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
@@ -13,6 +14,10 @@ import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 class CategoryFilterBottomSheet(
     private val onEachChipClickListener: OnChipClickListener
 ) : BottomSheetDialogFragment() {
+
+    interface OnChipClickListener {
+        fun onClick(chip: Chip, category: Category)
+    }
 
     companion object {
         const val TAG = "CategoryFilterBottomSheet"
@@ -31,8 +36,8 @@ class CategoryFilterBottomSheet(
 
             viewModel = memoCreateViewModel
             onChipClickListener = object : OnChipClickListener {
-                override fun onClick(category: Category) {
-                    onEachChipClickListener.onClick(category)
+                override fun onClick(chip: Chip, category: Category) {
+                    onEachChipClickListener.onClick(chip, category)
                     dismiss()
                 }
             }
