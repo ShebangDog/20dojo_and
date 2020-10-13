@@ -8,14 +8,23 @@ import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
-import jp.co.cyberagent.dojo2020.ui.widget.CategoryCreateBottomSheet
-import jp.co.cyberagent.dojo2020.ui.widget.CategoryFilterBottomSheet
 
 sealed class ChipType(@StyleRes val style: Int) {
     object Action : ChipType(R.style.Widget_MaterialComponents_Chip_Action)
     object Choice : ChipType(R.style.Widget_MaterialComponents_Chip_Choice)
     object Entry : ChipType(R.style.Widget_MaterialComponents_Chip_Entry)
     object Filter : ChipType(R.style.Widget_MaterialComponents_Chip_Filter)
+}
+
+
+sealed class OnChipClickListener {
+    interface OnChoiceChipClickListener {
+        fun onClick(category: Category)
+    }
+
+    interface OnFilterChipClickListener {
+        fun onClick(chip: Chip, category: Category)
+    }
 }
 
 @BindingAdapter(
@@ -31,8 +40,8 @@ fun bindChips(
     type: ChipType,
     categorySet: Set<Category>? = null,
     chipStateSet: Set<Category>? = null,
-    onChoiceChipClickListener: CategoryCreateBottomSheet.OnChipClickListener? = null,
-    onFilterChipClickListener: CategoryFilterBottomSheet.OnChipClickListener? = null
+    onChoiceChipClickListener: OnChipClickListener.OnChoiceChipClickListener? = null,
+    onFilterChipClickListener: OnChipClickListener.OnFilterChipClickListener? = null
 ) {
 
     chipGroup.removeAllViews()

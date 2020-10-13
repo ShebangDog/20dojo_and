@@ -10,7 +10,11 @@
 
         <variable
             name="onChipClickListener"
-            type="jp.co.cyberagent.dojo2020.ui.widget.CategoryCreateBottomSheet.OnChipClickListener" />
+            type="jp.co.cyberagent.dojo2020.ui.widget.adapter.OnChipClickListener.OnChoiceChipClickListener" />
+
+        <variable
+            name="chipType"
+            type="ChipType" />
 
         <import type="jp.co.cyberagent.dojo2020.data.model.Category" />
 
@@ -26,7 +30,7 @@
         <include
             android:id="@+id/category_list_layout"
             layout="@layout/layout_category_list"
-            app:chipType="@{ChipType.Choice.INSTANCE}"
+            app:chipType="@{chipType}"
             app:isSingleSelection="@{true}"
             app:onChoiceChipClickListener="@{onChipClickListener}"
             app:viewModel="@{viewModel}" />

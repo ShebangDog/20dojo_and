@@ -15,15 +15,13 @@ import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Color
 import jp.co.cyberagent.dojo2020.databinding.FragmentCategoryCreateBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
+import jp.co.cyberagent.dojo2020.ui.widget.adapter.ChipType
+import jp.co.cyberagent.dojo2020.ui.widget.adapter.OnChipClickListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class CategoryCreateBottomSheet(
-    private val onEachChipClickListener: OnChipClickListener
+    private val onEachChipClickListener: OnChipClickListener.OnChoiceChipClickListener
 ) : BottomSheetDialogFragment() {
-
-    interface OnChipClickListener {
-        fun onClick(category: Category)
-    }
 
     companion object {
         const val TAG = "CustomBottomSheetDialog"
@@ -43,7 +41,8 @@ class CategoryCreateBottomSheet(
             lifecycleOwner = viewLifecycleOwner
 
             viewModel = memoCreateViewModel
-            onChipClickListener = object : OnChipClickListener {
+            chipType = ChipType.Choice
+            onChipClickListener = object : OnChipClickListener.OnChoiceChipClickListener {
                 override fun onClick(category: Category) {
                     onEachChipClickListener.onClick(category)
                     dismiss()
