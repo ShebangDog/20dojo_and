@@ -1,16 +1,9 @@
 package jp.co.cyberagent.dojo2020.ui.home.adapter
 
-import android.view.View
 import android.widget.ImageButton
 import androidx.databinding.BindingAdapter
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.ui.ext.showImage
-
-
-@BindingAdapter("app:visibility")
-fun bindVisibility(imageButton: ImageButton, isShrinked: Boolean) {
-    imageButton.visibility = visibleOrGone(isShrinked)
-}
 
 @BindingAdapter("app:stopWatchIcon")
 fun binsStopWatchIcon(imageButton: ImageButton, isStarting: Boolean) {
@@ -19,5 +12,3 @@ fun binsStopWatchIcon(imageButton: ImageButton, isStarting: Boolean) {
 
     imageButton.showImage(if (isStarting) icStartingTimer else icStoppingTimer)
 }
-
-fun visibleOrGone(isVisible: Boolean) = if (isVisible) View.VISIBLE else View.GONE

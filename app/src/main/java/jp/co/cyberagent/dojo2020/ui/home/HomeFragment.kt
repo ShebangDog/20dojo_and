@@ -25,6 +25,7 @@ import jp.co.cyberagent.dojo2020.ui.home.adapter.OnAppearListener
 import jp.co.cyberagent.dojo2020.ui.home.adapter.OnTimerClickListener
 import jp.co.cyberagent.dojo2020.ui.home.adapter.TextAdapter
 import jp.co.cyberagent.dojo2020.ui.widget.CategoryFilterBottomSheet
+import jp.co.cyberagent.dojo2020.ui.widget.adapter.OnChipClickListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.concurrent.TimeUnit
 
@@ -70,8 +71,7 @@ class HomeFragment : Fragment() {
 
                 filterListImageButton.setOnClickListener {
                     val onEachChipClickListener =
-                        object : CategoryFilterBottomSheet.OnChipClickListener {
-
+                        object : OnChipClickListener.OnFilterChipClickListener {
                             override fun onClick(chip: Chip, category: Category) {
                                 homeViewModel.filter(chip, category)
                             }
@@ -99,7 +99,7 @@ class HomeFragment : Fragment() {
         findNavController().navigate(R.id.action_homeFragment_to_memoCreateFragment)
     }
 
-    private fun showDialog(onChipClickListener: CategoryFilterBottomSheet.OnChipClickListener) {
+    private fun showDialog(onChipClickListener: OnChipClickListener.OnFilterChipClickListener) {
         CategoryFilterBottomSheet(onChipClickListener).apply {
             show(activityInFragment.supportFragmentManager, CategoryFilterBottomSheet.TAG)
         }

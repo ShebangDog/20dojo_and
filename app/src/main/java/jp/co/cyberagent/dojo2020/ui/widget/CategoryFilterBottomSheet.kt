@@ -11,20 +11,18 @@ import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.databinding.FragmentCategoryFilterBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 import jp.co.cyberagent.dojo2020.ui.home.HomeViewModel
+import jp.co.cyberagent.dojo2020.ui.widget.adapter.ChipType
+import jp.co.cyberagent.dojo2020.ui.widget.adapter.OnChipClickListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class CategoryFilterBottomSheet(
-    private val onEachChipClickListener: OnChipClickListener
+    private val onEachChipClickListener: OnChipClickListener.OnFilterChipClickListener
 ) : BottomSheetDialogFragment() {
 
     data class ChipState(val isChecked: Boolean) {
         companion object {
             val None = ChipState(false)
         }
-    }
-
-    interface OnChipClickListener {
-        fun onClick(chip: Chip, category: Category)
     }
 
     companion object {
@@ -48,7 +46,8 @@ class CategoryFilterBottomSheet(
 
             chipStateSet = homeViewModel.chipStateLiveData
             onResetButtonClickListener = View.OnClickListener { homeViewModel.clearFilter() }
-            onChipClickListener = object : OnChipClickListener {
+            chipType = ChipType.Filter
+            onChipClickListener = object : OnChipClickListener.OnFilterChipClickListener {
                 override fun onClick(chip: Chip, category: Category) {
                     onEachChipClickListener.onClick(chip, category)
                 }
