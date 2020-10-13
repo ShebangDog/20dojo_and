@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.utils.ColorTemplate
 import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.databinding.FragmentProfileBinding
@@ -76,7 +75,6 @@ class ProfileFragment : Fragment() {
 
             profileViewModel.pieDataSetLiveData(
                 "",
-                ColorTemplate.MATERIAL_COLORS,
                 ProfileViewModel.ValueView.Default
             ).observe(viewLifecycleOwner) { dataSet ->
                 analyticGraphLayout.timeEachCategoryGraphPieChart.apply {

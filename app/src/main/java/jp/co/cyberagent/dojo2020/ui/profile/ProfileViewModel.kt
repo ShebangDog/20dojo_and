@@ -65,13 +65,20 @@ class ProfileViewModel @ViewModelInject constructor(
     }
 
     @FlowPreview
-    private fun pieDataSetFlow(label: String, color: IntArray, valueText: ValueView) =
+    private fun pieDataSetFlow(label: String, valueText: ValueView) =
         timeEachCategoryFlow
-            .map { list -> list.map { PieEntry(it.time.toFloat(), it.category.name) } }
-            .map { PieDataSet(it, label) }
-            .map { pieDataSet ->
+            .map { list ->
+                list.map {
+                    PieEntry(
+                        it.time.toFloat(),
+                        it.category.name
+                    )
+                } to list.map { it.category.color }
+            }
+            .map { (pieEntryList, color) -> PieDataSet(pieEntryList, label) to color }
+            .map { (pieDataSet, colorList) ->
                 pieDataSet.apply {
-                    setColors(*color)
+                    colors = colorList.map { it.value }
 
                     valueText.also {
                         valueTextSize = it.textSize
@@ -83,8 +90,8 @@ class ProfileViewModel @ViewModelInject constructor(
     val firebaseUserInfoLiveData = userFlow.asLiveData()
 
     @FlowPreview
-    fun pieDataSetLiveData(label: String, color: IntArray, valueText: ValueView) =
-        pieDataSetFlow(label, color, valueText).asLiveData()
+    fun pieDataSetLiveData(label: String, valueText: ValueView) =
+        pieDataSetFlow(label, valueText).asLiveData()
 
     @FlowPreview
     val profileLiveData = profileFlow.asLiveData()
