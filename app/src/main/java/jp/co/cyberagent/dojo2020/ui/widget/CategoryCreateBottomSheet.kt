@@ -13,21 +13,23 @@ import com.google.android.material.chip.Chip
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.Color
-import jp.co.cyberagent.dojo2020.databinding.FragmentCustomBottomSheetDialogBinding
+import jp.co.cyberagent.dojo2020.databinding.FragmentCategoryCreateBottomSheetBinding
 import jp.co.cyberagent.dojo2020.ui.create.MemoCreateViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-interface OnClickChipListener {
-    fun onClick(category: Category)
-}
+class CategoryCreateBottomSheet(
+    private val onEachChipClickListener: OnChipClickListener
+) : BottomSheetDialogFragment() {
 
-class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListener) :
-    BottomSheetDialogFragment() {
+    interface OnChipClickListener {
+        fun onClick(category: Category)
+    }
+
     companion object {
         const val TAG = "CustomBottomSheetDialog"
     }
 
-    private lateinit var binding: FragmentCustomBottomSheetDialogBinding
+    private lateinit var binding: FragmentCategoryCreateBottomSheetBinding
     private val memoCreateViewModel by activityViewModels<MemoCreateViewModel>()
 
     @ExperimentalCoroutinesApi
@@ -37,13 +39,13 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = FragmentCustomBottomSheetDialogBinding.inflate(inflater).apply {
+        binding = FragmentCategoryCreateBottomSheetBinding.inflate(inflater).apply {
             lifecycleOwner = viewLifecycleOwner
 
             viewModel = memoCreateViewModel
-            onChipClickListener = object : OnClickChipListener {
+            onChipClickListener = object : OnChipClickListener {
                 override fun onClick(category: Category) {
-                    onClickChipListener.onClick(category)
+                    onEachChipClickListener.onClick(category)
                     dismiss()
                 }
             }
@@ -64,7 +66,7 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                 val category = Category(name, color)
 
                 memoCreateViewModel.addCategory(name, color)
-                onClickChipListener.onClick(category)
+                onEachChipClickListener.onClick(category)
                 dismiss()
             }
 
@@ -75,7 +77,7 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
                     addCategoryButton.visibility =
                         if (text?.length == 0) View.GONE else View.VISIBLE
 
-                    val contains = chipGroup.children
+                    val contains = categoryListLayout.chipGroup.children
                         .map { if (it is Chip) it.text.toString() else null }
                         .filterNotNull()
                         .contains(text?.toString())
@@ -99,9 +101,4 @@ class CustomBottomSheetDialog(private val onClickChipListener: OnClickChipListen
         }
     }
 
-    private fun formatForHelper(text: CharSequence?): String {
-        val length = text.toString().length
-
-        return "$length/${Category.maxLength}"
-    }
 }
