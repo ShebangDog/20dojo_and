@@ -1,8 +1,6 @@
 package jp.co.cyberagent.dojo2020.ui.create.adapter
 
 import android.content.res.ColorStateList
-import android.widget.Button
-import android.widget.LinearLayout
 import androidx.annotation.StyleRes
 import androidx.databinding.BindingAdapter
 import com.google.android.material.chip.Chip
@@ -10,7 +8,6 @@ import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
-import jp.co.cyberagent.dojo2020.ui.home.adapter.visibleOrGone
 import jp.co.cyberagent.dojo2020.ui.widget.CategoryCreateBottomSheet
 import jp.co.cyberagent.dojo2020.ui.widget.CategoryFilterBottomSheet
 
@@ -19,16 +16,6 @@ sealed class ChipType(@StyleRes val style: Int) {
     object Choice : ChipType(R.style.Widget_MaterialComponents_Chip_Choice)
     object Entry : ChipType(R.style.Widget_MaterialComponents_Chip_Entry)
     object Filter : ChipType(R.style.Widget_MaterialComponents_Chip_Filter)
-}
-
-@BindingAdapter("app:visibility")
-fun bindVisibility(linearLayout: LinearLayout, isVisible: Boolean) {
-    linearLayout.visibility = visibleOrGone(isVisible)
-}
-
-@BindingAdapter("app:visibility")
-fun bindVisibility(button: Button, isVisible: Boolean) {
-    button.visibility = visibleOrGone(isVisible)
 }
 
 @BindingAdapter(
