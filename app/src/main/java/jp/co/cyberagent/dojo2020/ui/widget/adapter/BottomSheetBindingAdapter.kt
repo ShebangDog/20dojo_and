@@ -1,4 +1,4 @@
-package jp.co.cyberagent.dojo2020.ui.create.adapter
+package jp.co.cyberagent.dojo2020.ui.widget.adapter
 
 import android.content.res.ColorStateList
 import androidx.annotation.StyleRes
