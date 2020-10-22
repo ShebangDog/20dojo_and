@@ -8,7 +8,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="match_parent">
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/time_each_category_graph_pie_chart"

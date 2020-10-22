@@ -55,31 +55,15 @@ class ProfileFragment : Fragment() {
                 }
             }
 
-            profileViewModel.profileLiveData.observe(viewLifecycleOwner) { profile ->
-                profile?.accountList?.forEach {
-                    if (it.serviceName == "Twitter") {
-                        secondaryTopAccountLayout.apply {
-                            iconImageButton.showImage(R.mipmap.twitter_logo)
-                            idTextView.text = it.id
-                        }
-                    }
-
-                    if (it.serviceName == "GitHub") {
-                        secondaryBottomAccountLayout.apply {
-                            iconImageButton.showImage(R.mipmap.github_logo)
-                            idTextView.text = it.id
-                        }
-                    }
-                }
-
-            }
-
             profileViewModel.pieDataSetLiveData(
                 "",
                 ProfileViewModel.ValueView.Default
             ).observe(viewLifecycleOwner) { dataSet ->
                 analyticGraphLayout.timeEachCategoryGraphPieChart.apply {
                     data = PieData(dataSet)
+                    description.isEnabled = false
+
+                    setCenterTextSize(24f)
 
                     animateY(750)
                     invalidate()
@@ -89,11 +73,11 @@ class ProfileFragment : Fragment() {
             profileViewModel.totalTimeLiveData.observe(viewLifecycleOwner) { totalTime ->
                 totalTimeLayout.apply {
                     nameTextView.text = getString(R.string.total_time)
-                    valueTextView.text = totalTime.toString()
+                    valueTextView.text = Utility.millsToFormattedTime(totalTime)
                 }
 
                 analyticGraphLayout.timeEachCategoryGraphPieChart.apply {
-                    centerText = "TotalTime\n${totalTime}"
+                    centerText = "TotalTime\n${Utility.millsToFormattedTime(totalTime)}"
 
                     invalidate()
                 }

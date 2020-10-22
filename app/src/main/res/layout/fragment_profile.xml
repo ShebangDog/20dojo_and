@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/small_margin"
-            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginTop="@dimen/middle_margin"
             android:layout_marginRight="@dimen/small_margin"
             app:cardBackgroundColor="#ECECEC"
             app:cardCornerRadius="16dp"
@@ -33,44 +33,26 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/small_margin"
-                android:layout_marginBottom="@dimen/small_margin">
+                android:layout_marginHorizontal="@dimen/small_margin"
+                android:layout_marginVertical="@dimen/middle_margin">
 
                 <include
                     android:id="@+id/primary_account_layout"
                     layout="@layout/item_primary_account"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/small_margin"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <include
-                    android:id="@+id/secondary_top_account_layout"
-                    layout="@layout/item_secondary_account"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/primary_account_layout" />
-
-                <include
-                    android:id="@+id/secondary_bottom_account_layout"
-                    layout="@layout/item_secondary_account"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/secondary_top_account_layout" />
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/middle_margin"
                     android:background="@drawable/shape_border"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/secondary_bottom_account_layout">
+                    app:layout_constraintTop_toBottomOf="@id/primary_account_layout">
 
                     <include
                         android:id="@+id/total_time_layout"
@@ -116,7 +98,9 @@
             layout="@layout/item_analytic_graph"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="@dimen/large_margin"
+            android:layout_marginStart="@dimen/large_margin"
+            android:layout_marginEnd="@dimen/large_margin"
+            android:layout_marginBottom="@dimen/large_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
