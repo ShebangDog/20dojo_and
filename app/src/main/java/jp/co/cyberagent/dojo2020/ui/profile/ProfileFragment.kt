@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.databinding.FragmentProfileBinding
 import jp.co.cyberagent.dojo2020.ui.ext.showImage
+import jp.co.cyberagent.dojo2020.util.Utility
 import kotlinx.coroutines.FlowPreview
 
 @AndroidEntryPoint
@@ -48,9 +49,9 @@ class ProfileFragment : Fragment() {
 
             profileViewModel.firebaseUserInfoLiveData.observe(viewLifecycleOwner) { firebaseUserInfo ->
                 with(primaryAccountLayout) {
-                    iconImageButton.showImage(
-                        firebaseUserInfo?.imageUri
-                    )
+                    iconImageButton.showImage(firebaseUserInfo?.imageUri) { circleCrop() }
+
+                    nameTextView.text = firebaseUserInfo?.name
                 }
             }
 
