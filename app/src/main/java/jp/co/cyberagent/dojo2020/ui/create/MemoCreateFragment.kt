@@ -84,17 +84,13 @@ class MemoCreateFragment : Fragment() {
 
                 memoCreateViewModel.addDraft(title, content, categoryName, categoryColor)
 
-                showHome()
+                it.findNavController().navigateUp()
             }
 
             memoCreateToolBarLayout.memoCreateMaterialToolBar.setNavigationOnClickListener { view ->
                 view.findNavController().navigateUp()
             }
         }
-    }
-
-    private fun showHome() {
-        findNavController().navigate(R.id.action_createMemoFragment_to_homeFragment)
     }
 
     private fun showKeyboard() {
