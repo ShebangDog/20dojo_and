@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -25,7 +26,34 @@ class ProfileViewModel @ViewModelInject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
+    data class GraphData(val totalTime: Long, val pieDataSet: PieDataSet)
+
+    data class ValueView(val textSize: Float, @ColorInt val textColor: Int) {
+        companion object {
+            val Default = ValueView(16F, Color.WHITE)
+        }
+    }
+
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
+
+    val firebaseUserInfoLiveData = userFlow.asLiveData()
+
+
+    @FlowPreview
+    fun graphLiveData(label: String, valueText: ValueView) = MediatorLiveData<GraphData>()
+        .apply {
+            val pieDataSetLiveData = pieDataSetLiveData(label, valueText)
+
+            listOf(totalTimeLiveData, pieDataSetLiveData).forEach { liveData ->
+                addSource(liveData) {
+                    val totalTime = totalTimeLiveData.value ?: return@addSource
+                    val pieDataSet = pieDataSetLiveData.value ?: return@addSource
+
+                    value = GraphData(totalTime, pieDataSet)
+                }
+            }
+
+        }
 
     @FlowPreview
     private val memoListFlow = userFlow.flatMapConcat { firebaseUserInfo ->
@@ -37,6 +65,9 @@ class ProfileViewModel @ViewModelInject constructor(
     @FlowPreview
     private val totalTimeFlow = memoListFlow
         .map { memoList -> memoList.fold(0L) { result, memo -> result + memo.time } }
+
+    @FlowPreview
+    private val totalTimeLiveData = totalTimeFlow.asLiveData()
 
     @FlowPreview
     private val timeEachCategoryFlow = userFlow.flatMapConcat { firebaseUserInfo ->
@@ -82,18 +113,7 @@ class ProfileViewModel @ViewModelInject constructor(
                 }
             }
 
-    val firebaseUserInfoLiveData = userFlow.asLiveData()
-
     @FlowPreview
-    fun pieDataSetLiveData(label: String, valueText: ValueView) =
+    private fun pieDataSetLiveData(label: String, valueText: ValueView) =
         pieDataSetFlow(label, valueText).asLiveData()
-
-    @FlowPreview
-    val totalTimeLiveData = totalTimeFlow.asLiveData()
-
-    data class ValueView(val textSize: Float, @ColorInt val textColor: Int) {
-        companion object {
-            val Default = ValueView(16F, Color.WHITE)
-        }
-    }
 }

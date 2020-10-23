@@ -55,30 +55,24 @@ class ProfileFragment : Fragment() {
                 }
             }
 
-            profileViewModel.pieDataSetLiveData(
+            profileViewModel.graphLiveData(
                 "",
                 ProfileViewModel.ValueView.Default
-            ).observe(viewLifecycleOwner) { dataSet ->
+            ).observe(viewLifecycleOwner) {
+
+                totalTimeLayout.apply {
+                    nameTextView.text = getString(R.string.total_time)
+                    valueTextView.text = Utility.millsToFormattedTime(it.totalTime)
+                }
+
                 analyticGraphLayout.timeEachCategoryGraphPieChart.apply {
-                    data = PieData(dataSet)
+                    data = PieData(it.pieDataSet)
                     description.isEnabled = false
+                    centerText = "TotalTime\n${Utility.millsToFormattedTime(it.totalTime)}"
 
                     setCenterTextSize(24f)
 
                     animateY(750)
-                    invalidate()
-                }
-            }
-
-            profileViewModel.totalTimeLiveData.observe(viewLifecycleOwner) { totalTime ->
-                totalTimeLayout.apply {
-                    nameTextView.text = getString(R.string.total_time)
-                    valueTextView.text = Utility.millsToFormattedTime(totalTime)
-                }
-
-                analyticGraphLayout.timeEachCategoryGraphPieChart.apply {
-                    centerText = "TotalTime\n${Utility.millsToFormattedTime(totalTime)}"
-
                     invalidate()
                 }
             }
