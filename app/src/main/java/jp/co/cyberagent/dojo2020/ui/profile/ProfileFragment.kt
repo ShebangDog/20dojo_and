@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.databinding.FragmentProfileBinding
 import jp.co.cyberagent.dojo2020.ui.ext.showImage
+import jp.co.cyberagent.dojo2020.util.Utility
 import kotlinx.coroutines.FlowPreview
 
 @AndroidEntryPoint
@@ -48,52 +49,30 @@ class ProfileFragment : Fragment() {
 
             profileViewModel.firebaseUserInfoLiveData.observe(viewLifecycleOwner) { firebaseUserInfo ->
                 with(primaryAccountLayout) {
-                    iconImageButton.showImage(
-                        firebaseUserInfo?.imageUri
-                    )
+                    iconImageButton.showImage(firebaseUserInfo?.imageUri) { circleCrop() }
+
+                    nameTextView.text = firebaseUserInfo?.name
                 }
             }
 
-            profileViewModel.profileLiveData.observe(viewLifecycleOwner) { profile ->
-                profile?.accountList?.forEach {
-                    if (it.serviceName == "Twitter") {
-                        secondaryTopAccountLayout.apply {
-                            iconImageButton.showImage(R.mipmap.twitter_logo)
-                            idTextView.text = it.id
-                        }
-                    }
-
-                    if (it.serviceName == "GitHub") {
-                        secondaryBottomAccountLayout.apply {
-                            iconImageButton.showImage(R.mipmap.github_logo)
-                            idTextView.text = it.id
-                        }
-                    }
-                }
-
-            }
-
-            profileViewModel.pieDataSetLiveData(
+            profileViewModel.graphLiveData(
                 "",
                 ProfileViewModel.ValueView.Default
-            ).observe(viewLifecycleOwner) { dataSet ->
-                analyticGraphLayout.timeEachCategoryGraphPieChart.apply {
-                    data = PieData(dataSet)
+            ).observe(viewLifecycleOwner) {
 
-                    animateY(750)
-                    invalidate()
-                }
-            }
-
-            profileViewModel.totalTimeLiveData.observe(viewLifecycleOwner) { totalTime ->
                 totalTimeLayout.apply {
                     nameTextView.text = getString(R.string.total_time)
-                    valueTextView.text = totalTime.toString()
+                    valueTextView.text = Utility.millsToFormattedTime(it.totalTime)
                 }
 
                 analyticGraphLayout.timeEachCategoryGraphPieChart.apply {
-                    centerText = "TotalTime\n${totalTime}"
+                    data = PieData(it.pieDataSet)
+                    description.isEnabled = false
+                    centerText = "TotalTime\n${Utility.millsToFormattedTime(it.totalTime)}"
 
+                    setCenterTextSize(24f)
+
+                    animateY(750)
                     invalidate()
                 }
             }
