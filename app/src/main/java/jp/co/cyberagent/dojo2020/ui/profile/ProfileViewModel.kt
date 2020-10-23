@@ -10,7 +10,6 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import jp.co.cyberagent.dojo2020.data.CategoryRepository
 import jp.co.cyberagent.dojo2020.data.MemoRepository
-import jp.co.cyberagent.dojo2020.data.ProfileRepository
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
 import jp.co.cyberagent.dojo2020.data.model.Category
 import jp.co.cyberagent.dojo2020.data.model.TimeEachCategory
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 
 class ProfileViewModel @ViewModelInject constructor(
-    private val profileRepository: ProfileRepository,
     private val memoRepository: MemoRepository,
     private val categoryRepository: CategoryRepository,
     firebaseUserInfoRepository: UserInfoRepository,
@@ -28,9 +26,6 @@ class ProfileViewModel @ViewModelInject constructor(
 ) : AndroidViewModel(application) {
 
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
-
-    @FlowPreview
-    private val profileFlow = userFlow.flatMapConcat { profileRepository.fetchProfile(it?.uid) }
 
     @FlowPreview
     private val memoListFlow = userFlow.flatMapConcat { firebaseUserInfo ->
@@ -92,9 +87,6 @@ class ProfileViewModel @ViewModelInject constructor(
     @FlowPreview
     fun pieDataSetLiveData(label: String, valueText: ValueView) =
         pieDataSetFlow(label, valueText).asLiveData()
-
-    @FlowPreview
-    val profileLiveData = profileFlow.asLiveData()
 
     @FlowPreview
     val totalTimeLiveData = totalTimeFlow.asLiveData()
