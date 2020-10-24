@@ -1,19 +1,17 @@
 package jp.co.cyberagent.dojo2020.ui.home
 
+import android.view.View
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import androidx.navigation.findNavController
 import com.google.android.material.chip.Chip
 import jp.co.cyberagent.dojo2020.data.DraftRepository
 import jp.co.cyberagent.dojo2020.data.FlowTimer
 import jp.co.cyberagent.dojo2020.data.MemoRepository
 import jp.co.cyberagent.dojo2020.data.UserInfoRepository
-import jp.co.cyberagent.dojo2020.data.model.Category
-import jp.co.cyberagent.dojo2020.data.model.Draft
-import jp.co.cyberagent.dojo2020.data.model.Memo
-import jp.co.cyberagent.dojo2020.data.model.toText
+import jp.co.cyberagent.dojo2020.data.model.*
+import jp.co.cyberagent.dojo2020.ui.home.adapter.OnTimerClickListener
+import jp.co.cyberagent.dojo2020.ui.home.adapter.TextAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -23,7 +21,10 @@ class HomeViewModel @ViewModelInject constructor(
     private val draftRepository: DraftRepository,
     private val memoRepository: MemoRepository,
     firebaseUserInfoRepository: UserInfoRepository
-) : ViewModel() {
+) : ViewModel(), TextAdapter.Listeners {
+
+    private val mutableTextStateLiveData = MutableLiveData(TextAdapter.TextState.initial)
+    val textStateLiveData: LiveData<TextAdapter.TextState> = mutableTextStateLiveData
 
     private val userFlow = firebaseUserInfoRepository.fetchUserInfo()
 
@@ -47,6 +48,14 @@ class HomeViewModel @ViewModelInject constructor(
 
                 (leftList + rightList).distinctBy { it.id }
             }
+    }
+
+    fun switchTextState() {
+        mutableTextStateLiveData.apply {
+            val state = value ?: return@apply
+
+            value = state.copy(isShrink = !state.isShrink, isOneLine = !state.isOneLine)
+        }
     }
 
     @ExperimentalCoroutinesApi
@@ -94,4 +103,27 @@ class HomeViewModel @ViewModelInject constructor(
     private fun addTimeToMemo(memo: Memo, time: Long) = memo
         .let { Memo(it.id, it.title, it.contents, time + it.time, it.category) }
 
+    override val onItemClickListener: View.OnClickListener
+        get() = View.OnClickListener {
+            val action =
+                HomeFragmentDirections.actionHomeFragmentToMemoEditFragment("test_id")
+            it.findNavController().navigate(action)
+        }
+
+    override val onTimerClickListener: OnTimerClickListener
+        get() = {
+            when (it) {
+                is Text.Right -> saveDraft(it.value.toDraft())
+
+                is Text.Left -> {
+                    val draft = it.value
+                    val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
+                        System.currentTimeMillis() - draft.startTime
+                    )
+
+                    saveMemo(draft.toMemo(currentSeconds))
+                    deleteDraft(draft)
+                }
+            }
+        }
 }
