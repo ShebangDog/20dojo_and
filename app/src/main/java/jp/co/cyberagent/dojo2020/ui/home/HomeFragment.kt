@@ -19,15 +19,11 @@ import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import jp.co.cyberagent.dojo2020.R
 import jp.co.cyberagent.dojo2020.data.model.Category
-import jp.co.cyberagent.dojo2020.data.model.Text
 import jp.co.cyberagent.dojo2020.databinding.FragmentHomeBinding
-import jp.co.cyberagent.dojo2020.ui.home.adapter.OnAppearListener
-import jp.co.cyberagent.dojo2020.ui.home.adapter.OnTimerClickListener
 import jp.co.cyberagent.dojo2020.ui.home.adapter.TextAdapter
 import jp.co.cyberagent.dojo2020.ui.widget.CategoryFilterBottomSheet
 import jp.co.cyberagent.dojo2020.ui.widget.adapter.OnChipClickListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -81,7 +77,7 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            val textAdapter = TextAdapter(viewLifecycleOwner, listeners())
+            val textAdapter = TextAdapter(viewLifecycleOwner, homeViewModel)
             recyclerView.adapter = textAdapter
             homeViewModel.filteredTextListLiveData.observe(viewLifecycleOwner) {
                 textAdapter.submitList(
@@ -124,62 +120,5 @@ class HomeFragment : Fragment() {
 
                 override fun onLoadCleared(placeholder: Drawable?) {}
             })
-    }
-
-    @ExperimentalCoroutinesApi
-    private fun listeners(): TextAdapter.Listeners = object : TextAdapter.Listeners {
-
-        override val onAppearListener: OnAppearListener
-            get() = { binding, text ->
-                when (text) {
-                    is Text.Left -> {
-                        val draft = text.value
-
-                        with(homeViewModel) {
-
-                            val liveData = timeLiveData(draft)
-                            binding.timeLiveData = liveData
-                        }
-                    }
-
-                    is Text.Right -> {
-                        val memo = text.value
-
-                        binding.totalTime = memo.time
-                    }
-                }
-            }
-
-        override val onItemClickListener: View.OnClickListener
-            get() = View.OnClickListener {
-                val action =
-                    HomeFragmentDirections.actionHomeFragmentToMemoEditFragment("test_id")
-                findNavController().navigate(action)
-            }
-
-        override val onTimerClickListener: OnTimerClickListener
-            get() = { text ->
-                when (text) {
-                    is Text.Left -> {
-                        val draft = text.value
-
-                        with(homeViewModel) {
-                            val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(
-                                System.currentTimeMillis() - draft.startTime
-                            )
-
-                            saveMemo(draft.toMemo(currentSeconds))
-                            deleteDraft(draft)
-                        }
-                    }
-
-                    is Text.Right -> {
-                        val memo = text.value
-
-                        homeViewModel.saveDraft(memo.toDraft())
-                    }
-                }
-            }
-
     }
 }

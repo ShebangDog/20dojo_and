@@ -10,9 +10,15 @@
 
         <import type="jp.co.cyberagent.dojo2020.data.model.Text" />
 
+        <import type="jp.co.cyberagent.dojo2020.ui.home.adapter.TextAdapter.TextState" />
+
         <variable
             name="item"
             type="Text" />
+
+        <variable
+            name="textStateLiveData"
+            type="LiveData&lt;TextState>" />
 
         <variable
             name="timeLiveData"
@@ -27,8 +33,8 @@
             type="Boolean" />
 
         <variable
-            name="listeners"
-            type="jp.co.cyberagent.dojo2020.ui.home.adapter.TextAdapter.Listeners" />
+            name="viewModel"
+            type="jp.co.cyberagent.dojo2020.ui.home.HomeViewModel" />
 
     </data>
 
@@ -40,7 +46,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="@dimen/small_margin"
         android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{listeners.onItemClickListener}"
+        android:onClick="@{() -> viewModel.onItemClickListener}"
         app:cardCornerRadius="@dimen/view_memo_cardview_corner_radius"
         app:cardUseCompatPadding="true">
 
@@ -100,7 +106,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/ripple_filter_list_button"
-                    android:onClick="@{() -> listeners.onTimerClickListener.invoke(item)}"
+                    android:onClick="@{() -> viewModel.onTimerClickListener.invoke(item)}"
                     android:padding="12dp"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -145,6 +151,8 @@
                     android:layout_marginHorizontal="@dimen/middle_margin"
                     android:layout_marginVertical="@dimen/small_margin"
                     android:text="@{item.content.toOneLine()}"
+                    app:contentText="@{item}"
+                    app:isOneLine="@{textStateLiveData.OneLine}"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -164,7 +172,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:background="?android:attr/selectableItemBackground"
+                    android:onClick="@{() -> viewModel.switchTextState()}"
                     android:src="@drawable/ic_expand_more"
+                    app:isShrink="@{textStateLiveData.Shrink}"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
