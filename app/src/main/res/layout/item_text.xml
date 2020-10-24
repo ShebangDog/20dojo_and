@@ -46,7 +46,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="@dimen/small_margin"
         android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{() -> viewModel.onItemClickListener}"
+        android:onClick="@{(v) -> viewModel.onItemClickListener.onClick(v)}"
         app:cardCornerRadius="@dimen/view_memo_cardview_corner_radius"
         app:cardUseCompatPadding="true">
 
